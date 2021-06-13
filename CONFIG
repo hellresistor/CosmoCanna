@@ -5,7 +5,7 @@
 # EDITABLE #
 MONIKER=""
 WALLETNAME=""
-CHAINID="bitcanna-testnet-2"
+CHAINID="bitcanna-testnet-3"
 
 BCNACOSMOSREP="testnet-bcna-cosmos"
 
