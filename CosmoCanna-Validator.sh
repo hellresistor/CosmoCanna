@@ -31,7 +31,7 @@ cp -p "$BCNACONF"/genesis.json "$BCNAUSERHOME"/BCNABACKUP/OLDCONFIG/genesis.json
 cp -rp "$BCNACONF"/gentx/ "$BCNAUSERHOME"/BCNABACKUP/OLDCONFIG/gentx."$DATENOW"
 rm -rf "$BCNACONF"/genesis.json
 rm -rf "$BCNACONF"/gentx/ 
-curl -s https://raw.githubusercontent.com/BitCannaGlobal/testnet-bcna-cosmos/main/instructions/stage2/genesis.json > /tmp/genesis.json || erro "Unable get genesis.json from Stage2 page"
+curl -s "$GENESISLINK" > /tmp/genesis.json || erro "Unable get genesis.json from Stage2 page"
 mv /tmp/genesis.json "$BCNACONF"/genesis.json
 
 if "$BCNAD" add-genesis-account "$("$BCNAD" keys show "$WALLETNAME" -a)" 100000000000ubcna ; then
@@ -93,7 +93,7 @@ Choice:"
 read -r choicy
 case $choicy in
  1) checkservicestop
-	gengenesis ;;
+    gengenesis ;;
  2) validsec ;;
  3) ;;
  q|Q) ok "Bye Bye Roll One joint for me ;)" && exit 0 ;;
