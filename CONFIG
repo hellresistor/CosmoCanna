@@ -1,0 +1,43 @@
+#!/bin/bash
+#### CONFIGURATION file
+
+############
+# EDITABLE #
+MONIKER=""
+WALLETNAME=""
+CHAINID="bitcanna-testnet-2"
+
+BCNACOSMOSREP="testnet-bcna-cosmos"
+
+############
+
+BCNACOSMOSLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4)
+GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/$BCNACOSMOSREP/main/instructions/stage1/genesis.json"
+PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656" # Comma separated values Ex: 123,123,123,123
+SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656"
+BCNAUSERHOME="$HOME"
+BCNADIR="$BCNAUSERHOME/.bcna"
+BCNACONF="$BCNADIR/config"
+BCNADATA="$BCNADIR/data"
+BCNAD="bcnad"
+BCNAPORT="26656"
+SCRPTVER="V1.00"
+DONATE="B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv"
+DATENOW=$(date +"%Y%m%d%H%M%S")
+VPSIP=$(curl -s ifconfig.me)
+
+#### Rainbowing our lives
+export bluey=$'\e[94m'
+export boldy=$'\e[1m'
+export endy=$'\e[0m'
+export greeny=$'\e[92m'
+export greyy=$'\e[37m'
+export redy=$'\e[91m'
+export yellowy=$'\e[93m'
+
+function concl { echo -e "${greeny}\n\t\t __    ___  __  \n\t\t|__) |  |  /  \`  /\  |\ | |\ |  /\  \n\t\t|__) |  |  \__, /~~\ | \| | \| /~~\ \n\n\n${greeny}\tProject Ver${greyy}: ${boldy}$SCRPTVER${greeny}\n\tby${greyy}: ${boldy} hellresistor\n\n\tDonation with Bitcanna\n\t${greeny}BCNA${greyy}: ${yellowy}${boldy}$DONATE\n${endy}"; }
+function erro { echo -e "${boldy}${redy}[ERRO]${endy} ${redy} $* ${endy}"; sleep 1; exit 1; }
+function info { echo -e "${boldy}${bluey}[${greyy}INFO${bluey}]${endy} ${greyy} $* ${endy}"; }
+function intro { echo -e "\n${greeny}  bbc                              Script Contribution to BitCanna Community\n${greeny}  bbb                                     to Ubuntu 18.04 LTS Server\n${greeny}  bbbbb                            ${greyy}-------------------------------------------\n${greeny}  bbbbb                              Executing this script you are Allow to${greyy}:\n${greeny}  bbbbb   cbcb          bbbbbb \n${greeny}  bbbbb bbbbbbbbb     bbbbbbbbbb     ${greyy}- Install / Update / Remove BCNA Wallet\n${greeny}  bbbcb bbbbbbbbbb   cbbbbbbcbbbb    ${greyy}- Configure a Validator\n${greeny}  bbbbbbbb    bbbbbibbbb      cbbb   ${greyy}- Configure Prometheus Analitics\n${greeny}  bbbbib        bbb bibbb  \n${greeny}  bbbbib         bbbbbb             ${greyy}------------------------------------------\n${greeny}  bbbbbb         bbbbbb  \n${greeny}  bbcbbb         bbbbcb                       Project Ver${greyy}: ${boldy}${yellowy}$SCRPTVER${greeny}\n${greeny}  bbbbbb         bbbbbcb \n${greeny}  bbbbbbbb      bbbbbbbbbc     cbbb              by hellresistor \n${greeny}    bbbbbbbbbbbbbcbb bbbbbbbbbbbbb   Support donate seeds/CBD with Bitcanna\n${greeny}     bbbbbbbbbbb bbb cbbbbbbbbbib \n${greeny}       bbbbbbbbb       bbbbibbbb    BCNA${greyy}: ${yellowy}${boldy}$DONATE\n\n\n${boldy}${redy}    HAVE IN MIND!! EVERY TIME DO YOUR OWN BACKUPS BEFORE USING THIS SCRIPT\n\n";} 
+function ok   { echo -e "${boldy}${bluey}[${greeny}OK${bluey}]${endy} ${greeny} $* ${endy}"; sleep 0.2; }
+function warn { echo -e "${boldy}${bluey}[${yellowy}WARN${bluey}]${endy} ${yellowy} $* ${endy}"; }
