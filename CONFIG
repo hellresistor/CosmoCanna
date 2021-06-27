@@ -1,12 +1,14 @@
 #!/bin/bash
 #### CONFIGURATION file
+BCNACHAIN="bitcanna-testnet-3"
+GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
+
 
 ############
 # EDITABLE #
 MONIKER=""
 WALLETNAME=""
 CHAINID="bitcanna-testnet-3"
-
 BCNACOSMOSREP="testnet-bcna-cosmos"
 
 ############
