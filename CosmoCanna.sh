@@ -25,12 +25,12 @@ MYMoniker=$(curl http://localhost:26657/status | grep -Po '"moniker": "\K.*?(?="
 MYVALIDADDRESS=$(curl -s http://localhost:26657/genesis | grep -A13 "$MYMoniker" | tail -n1 | grep -Po '"validator_address": "\K.*?(?=")')
 MYDELEGADDRESS=$(curl -s http://localhost:26657/genesis | grep -A12 "$MYMoniker" | tail -n1 | grep -Po '"delegator_address": "\K.*?(?=")')
 MYADDRESS=$MYDELEGADDRESS
-MYAvaliableBal=$(bcnad query bank balances $MYDELEGADDRESS --output json | jq | grep -Po '"amount": "\K.*?(?=")')
-MYCommiBalance=$(bcnad query distribution commission $MYVALIDADDRESS --output json | jq  | grep -Po '"amount": "\K.*?(?=")')
-MyRewardBalance=$(bcnad query distribution rewards $MYDELEGADDRESS --output json --chain-id bitcanna-testnet-3 | jq | grep -A4 "total" |  grep -Po '"amount": "\K.*?(?=")')
+MYAvaliableBal=$(bcnad query bank balances "$MYDELEGADDRESS" --output json | jq | grep -Po '"amount": "\K.*?(?=")')
+MYCommiBalance=$(bcnad query distribution commission "$MYVALIDADDRESS" --output json | jq  | grep -Po '"amount": "\K.*?(?=")')
+MyRewardBalance=$(bcnad query distribution rewards "$MYDELEGADDRESS" --output json --chain-id bitcanna-testnet-3 | jq | grep -A4 "total" |  grep -Po '"amount": "\K.*?(?=")')
 }
 
-function setsourcevalidator(){
+function setsourceaddress(){
 info "Put Source Validator/Operator/Wallet address:"
 read -r THESADDRESS
 THESADDRESS=${THESADDRESS:-$MYADDRESS}
@@ -42,7 +42,7 @@ read -r THEAMOUNT
 THEAMOUNT=${THEAMOUNT:-$MYAMOUNT}
 }
 
-function setdestvalidator(){
+function setdestaddress(){
 info "Put Target Validator/Operator address:"
 read -r THEDADDRESS
 THEDADDRESS=${THEDADDRESS:-$MYADDRESS}
@@ -77,19 +77,19 @@ Choice:"
 read -r choicy
 case $choicy in
  1) bcnad tx distribution withdraw-all-rewards --from "$MYMONIKER" "$GASFEE" --memo "Withdraw All rewards by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
- 2) setdestvalidator
+ 2) setdestaddress
     setamount
     bcnad tx staking delegate "$THEDADDRESS" "$THEAMOUNT"ubcna --from "$MYMONIKER" "$GASFEE" --memo "Delegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
- 3) setsourcevalidator
-    setdestvalidator
+ 3) setsourceaddress
+    setdestaddress
     setamount
     bcnad tx staking redelegate "$THESADDRESS" "$THEDADDRESS" "$THEAMOUNT"ubcna --from "$MYMONIKER" "$GASFEE" --memo "Redelegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
- 4) setsourcevalidator
-    setdestvalidator
+ 4) setsourceaddress
+    setdestaddress
     setamount
     bcnad tx bank send "$THESADDRESS" "$THEDADDRESS" "$THEAMOUNT"ubcna -y "$GASFEE" --memo "Send Bcna by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
  5)  ;;
- 6) setdestvalidator
+ 6) setdestaddress
     setamount
     bcnad tx staking unbond "$THEDADDRESS" "$THEAMOUNT"ubcna --from "$MYMONIKER" "$GASFEE" --memo "Unbond by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
  7) bcnad tx slashing unjail --from "$MYMONIKER" "$GASFEE" --memo "Unjailing by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
