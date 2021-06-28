@@ -76,14 +76,14 @@ Q- Bye Bye
 Choice:"
 read -r choicy
 case $choicy in
- 1) bcnad tx distribution withdraw-all-rewards --from "$MYMONIKER" "$GASFEE" --memo "Withdraw All rewards by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
+ 1) bcnad tx distribution withdraw-all-rewards --from "$MYMoniker" "$GASFEE" --memo "Withdraw All rewards by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
  2) setdestaddress
     setamount
-    bcnad tx staking delegate "$THEDADDRESS" "$THEAMOUNT"ubcna --from "$MYMONIKER" "$GASFEE" --memo "Delegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
+    bcnad tx staking delegate "$THEDADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" "$GASFEE" --memo "Delegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
  3) setsourceaddress
     setdestaddress
     setamount
-    bcnad tx staking redelegate "$THESADDRESS" "$THEDADDRESS" "$THEAMOUNT"ubcna --from "$MYMONIKER" "$GASFEE" --memo "Redelegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
+    bcnad tx staking redelegate "$THESADDRESS" "$THEDADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" "$GASFEE" --memo "Redelegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
  4) setsourceaddress
     setdestaddress
     setamount
@@ -91,8 +91,8 @@ case $choicy in
  5)  ;;
  6) setdestaddress
     setamount
-    bcnad tx staking unbond "$THEDADDRESS" "$THEAMOUNT"ubcna --from "$MYMONIKER" "$GASFEE" --memo "Unbond by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
- 7) bcnad tx slashing unjail --from "$MYMONIKER" "$GASFEE" --memo "Unjailing by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
+    bcnad tx staking unbond "$THEDADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" "$GASFEE" --memo "Unbond by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
+ 7) bcnad tx slashing unjail --from "$MYMoniker" "$GASFEE" --memo "Unjailing by CosmoCanna-Lazy tool" --chain-id "$BCNACHAIN" ;;
  q|Q) ok "Bye Bye Roll One joint for me ;)" && exit 0 ;;
  *) warn "MISSING KEY"
 esac
