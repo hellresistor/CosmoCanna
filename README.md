@@ -1,3 +1,5 @@
+[![ShellLinter](https://github.com/hellresistor/CosmoCanna/actions/workflows/main.yml/badge.svg)](https://github.com/hellresistor/CosmoCanna/actions/workflows/main.yml)
+
 # CosmoCanna
 Bitcanna Cosmos Lazy Tool - The Validators life easiest
 Generate Genesis Account  to your Moniker and Wallet on OFFline Mode
