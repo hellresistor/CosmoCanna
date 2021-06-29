@@ -7,7 +7,33 @@
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
+
+########
+# EDIT #
+MONIKER="My Moniker" ## Set Your Moniker## 
+WALLETNAME="$MONIKER" ## Set Your Name Wallet
+CHAINID="bitcanna-testnet-4"  ## Set correct testnet
+########
+
 . CONFIG
+
+function varys(){
+BCNACOSMOSREP="testnet-bcna-cosmos"
+BCNACOSMOSLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4)
+GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/$BCNACOSMOSREP/main/instructions/stage4/genesis.json"
+PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656" # Comma separated values Ex: 123,123,123,123
+SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656"
+BCNAUSERHOME="$HOME"
+BCNADIR="$BCNAUSERHOME/.bcna"
+BCNACONF="$BCNADIR/config"
+BCNADATA="$BCNADIR/data"
+BCNAD="bcnad"
+BCNAPORT="26656"
+SCRPTVER="V1.00"
+DONATE="B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv"
+DATENOW=$(date +"%Y%m%d%H%M%S")
+VPSIP=$(curl -s ifconfig.me)
+}
 
 function checkservicestop(){
 info "Check $BCNAD.service Stopped"
@@ -58,12 +84,12 @@ info "Security to Validator Node"
 if sed -E -i "s/persistent_peers = \".*\"/persistent_peers = \"$PERSISTPEERS\"/" "$BCNACONF"/config.toml ; then
  ok "persistent_peers written on $BCNACONF/config.toml"
 else
- warn "persistent_peers NOT written on $BCNACONF/config.toml. Chack it Manually"
+ warn "persistent_peers NOT written on $BCNACONF/config.toml. Check it Manually"
 fi
 if sed -E -i "/private_peer_ids =/ s/^#*/#/" "$BCNACONF"/config.toml ; then
  ok "private_peer_ids written on $BCNACONF/config.toml"
 else
- warn "private_peer_ids NOT written on $BCNACONF/config.toml. Chack it Manually"
+ warn "private_peer_ids NOT written on $BCNACONF/config.toml. Check it Manually"
 fi
 if sed -E -i "s/pex = true/pex = false/" "$BCNACONF"/config.toml ; then
  ok "pex written on $BCNACONF/config.toml"
@@ -105,6 +131,7 @@ done
 ###############
 ###  Start  ###
 ###############
+varys
 if [ -z "$MONIKER" ]; then
  erro "Set MONIKER on CONFIG file ..."
 fi
