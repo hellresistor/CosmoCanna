@@ -1,31 +1,4 @@
 #!/bin/bash
-#### CONFIGURATION file
-BCNACHAIN="bitcanna-testnet-3"
-GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
-
-
-############
-# EDITABLE #
-MONIKER=""
-WALLETNAME=""
-CHAINID="bitcanna-testnet-3"
-BCNACOSMOSREP="testnet-bcna-cosmos"
-
-############
-BCNACOSMOSLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4)
-GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/$BCNACOSMOSREP/main/instructions/stage2/genesis.json"
-PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656" # Comma separated values Ex: 123,123,123,123
-SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656"
-BCNAUSERHOME="$HOME"
-BCNADIR="$BCNAUSERHOME/.bcna"
-BCNACONF="$BCNADIR/config"
-BCNADATA="$BCNADIR/data"
-BCNAD="bcnad"
-BCNAPORT="26656"
-SCRPTVER="V1.00"
-DONATE="B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv"
-DATENOW=$(date +"%Y%m%d%H%M%S")
-VPSIP=$(curl -s ifconfig.me)
 
 #### Rainbowing our lives
 export bluey=$'\e[94m'
@@ -36,6 +9,7 @@ export greyy=$'\e[37m'
 export redy=$'\e[91m'
 export yellowy=$'\e[93m'
 
+#### Some personalized messages
 function concl { echo -e "${greeny}\n\t\t __    ___  __  \n\t\t|__) |  |  /  \`  /\  |\ | |\ |  /\  \n\t\t|__) |  |  \__, /~~\ | \| | \| /~~\ \n\n\n${greeny}\tProject Ver${greyy}: ${boldy}$SCRPTVER${greeny}\n\tby${greyy}: ${boldy} hellresistor\n\n\tDonation with Bitcanna\n\t${greeny}BCNA${greyy}: ${yellowy}${boldy}$DONATE\n${endy}"; }
 function erro { echo -e "${boldy}${redy}[ERRO]${endy} ${redy} $* ${endy}"; sleep 1; exit 1; }
 function info { echo -e "${boldy}${bluey}[${greyy}INFO${bluey}]${endy} ${greyy} $* ${endy}"; }
