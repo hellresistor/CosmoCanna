@@ -10,23 +10,23 @@
 
 ########
 # EDIT #
-MONIKER="My Moniker" ## Set Your Moniker## 
-WALLETNAME="$MONIKER" ## Set Your Name Wallet
 TESTVER="v0.testnet7"
+BCNAD="bcnad"
+COSMOV="cosmovisor"
 ########
 
 . CONFIG
 
 if [[ ! -f ${HOME}/.bcna/cosmovisor ]]; then
  info "Creating cosmovisor directories..."
- mkdir -p ${HOME}/.bcna/cosmovisor/genesis/bin
- mkdir -p ${HOME}/.bcna/cosmovisor/upgrades/sativa/bin
+ mkdir -p "${HOME}"/.bcna/cosmovisor/genesis/bin
+ mkdir -p "${HOME}"/.bcna/cosmovisor/upgrades/sativa/bin
 else
  info "Moving old .bcna/cosmovisor folder"
- mv ${HOME}/.bcna/cosmovisor ${HOME}/.bcna/cosmovisor."$DATENOW"
+ mv "${HOME}"/.bcna/cosmovisor "${HOME}"/.bcna/cosmovisor."$DATENOW"
  info "Creating cosmovisor directories..."
- mkdir -p ${HOME}/.bcna/cosmovisor/genesis/bin
- mkdir -p ${HOME}/.bcna/cosmovisor/upgrades/sativa/bin
+ mkdir -p "${HOME}"/.bcna/cosmovisor/genesis/bin
+ mkdir -p "${HOME}"/.bcna/cosmovisor/upgrades/sativa/bin
 fi
 
 
@@ -43,13 +43,13 @@ else
 fi
 chmod +x bcnad
 if [[ $(./bcnad version) == "$TESTVER" ]] ; then
- mv ./bcnad ${HOME}/.bcna/cosmovisor/upgrades/sativa/bin/bcnad
+ mv ./bcnad "${HOME}"/.bcna/cosmovisor/upgrades/sativa/bin/bcnad
 fi
 
 
 cp $(which bcnad) ${HOME}/.bcna/cosmovisor/genesis/bin/
 
-ln -s -T ${HOME}/.bcna/cosmovisor/genesis ${HOME}/.bcna/cosmovisor/current
+ln -s -T "${HOME}"/.bcna/cosmovisor/genesis "${HOME}"/.bcna/cosmovisor/current
 warn "You can check that everything is OK:"
 ls .bcna/cosmovisor/ -lh
 read -n 1 -s -r -p "$(info "Press any key to continue...")"
@@ -68,9 +68,9 @@ RestartSec=3
 LimitNOFILE=4096
 [Install]
 WantedBy=multi-user.target
-" > /tmp/cosmovisor.service
+" > /tmp/"$COSMOV".service
 
-if sudo mv /tmp/cosmovisor.service /lib/systemd/system/ && sudo systemctl daemon-reload ; then
+if sudo mv /tmp/"$COSMOV".service /lib/systemd/system/ && sudo systemctl daemon-reload ; then
  info "Check $BCNAD.service Stopped"
  if sudo systemctl is-active "$BCNAD".service > /dev/null 2>&1 ; then
   sudo systemctl stop "$BCNAD"
@@ -84,7 +84,7 @@ if sudo mv /tmp/cosmovisor.service /lib/systemd/system/ && sudo systemctl daemon
   erro "Something wrong with $BCNAD.service"
  fi
  
- if sudo systemctl enable cosmovisor.service && sudo systemctl start cosmovisor.service ; then 
+ if sudo systemctl enable "$COSMOV".service && sudo systemctl start "$COSMOV".service ; then 
   ok "Bitcanna-cosmovisor Service Enabled and Started"
  else 
   erro "Problem Enabling/Starting Bitcanna-cosmovisor Service"
@@ -104,6 +104,8 @@ info "Commands:"
 echo "Show cosmovisor Version: cosmovisor version
 Show bcna Version: bcnad version
 Show Sync info: cosmovisor status"
+info "Cosmovisor Service:"
+"$COSMOV"
 
 if sudo rm /usr/local/bin/bcnad ; then
  ok "bcnad removed"
