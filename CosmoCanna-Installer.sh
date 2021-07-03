@@ -294,6 +294,7 @@ WantedBy=multi-user.target
   erro "Problem setting Bitcanna-Cosmos Service"
  fi
 fi
+sleep 5
 syncr
 info "Lets Check Syncronization again"
 sleep 2
@@ -310,7 +311,7 @@ read -n 1 -s -r -p "$(info "Press any key to continue...")"
 function syncr(){
 info "Syncronizing with Blockchain"
 NEEDED="420"
-while [ "$NEEDED" -gt "4" ]
+while [ "$NEEDED" -gt "1" ]
 do 
 clear
 bcnatimer
