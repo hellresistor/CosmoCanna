@@ -12,6 +12,13 @@
 
 .CONFIG
 
+info "Check bcnad.service/cosmovisor.service Running"
+if sudo systemctl is-active bcnad.service > /dev/null 2>&1 || sudo systemctl is-active cosmovisor.service > /dev/null 2>&1 ; then
+ ok "bcnad/cosmovisor service Running"
+else
+ erro "bcnad/cosmovisor.service Not Running. Run it first..."
+fi
+
 info "Syncronizing with Blockchain"
 NEEDED="420"
 while [ "$NEEDED" -gt "4" ]
