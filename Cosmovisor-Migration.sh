@@ -47,7 +47,7 @@ if [[ $(./bcnad version) == "$TESTVER" ]] ; then
 fi
 
 
-cp $(which bcnad) ${HOME}/.bcna/cosmovisor/genesis/bin/
+cp "$(command -v bcnad)" "${HOME}"/.bcna/cosmovisor/genesis/bin/
 
 ln -s -T "${HOME}"/.bcna/cosmovisor/genesis "${HOME}"/.bcna/cosmovisor/current
 warn "You can check that everything is OK:"
@@ -62,7 +62,7 @@ User=${USER}
 Environment=DAEMON_NAME=bcnad
 Environment=DAEMON_RESTART_AFTER_UPGRADE=true
 Environment=DAEMON_HOME=${HOME}/.bcna
-ExecStart=$(which cosmovisor) start
+ExecStart=$(command -v cosmovisor) start
 Restart=always
 RestartSec=3
 LimitNOFILE=4096
@@ -97,7 +97,7 @@ fi
 echo "export DAEMON_NAME=bcnad
 export DAEMON_RESTART_AFTER_UPGRADE=true
 export DAEMON_HOME=${HOME}/.bcna
-PATH=\"${HOME}/.bcna/cosmovisor/current/bin:$PATH\"" | tee -a ${HOME}/.profile
+PATH=\"${HOME}/.bcna/cosmovisor/current/bin:$PATH\"" | tee -a "${HOME}"/.profile
 source .profile
 
 info "Commands:"
