@@ -7,6 +7,8 @@ Bitcanna Cosmos Lazy Tool includes:
   - CosmoCanna.sh           - A Lazy tool to Manage your wallet
   - CosmoCanna-Validator.sh - A tool to Generate Genesis Account and JSON file and configure validator security
   - CosmoCanna-Installer.sh - A tool to Install/Remove/Update a Bitcanna-Cosmos Wallet :)
+  - Sync-Check-Tool.sh      - A animated tool to check syncronization time remaining
+  - Cosmovisor-Migration.sh - A tool to Migrate BCNAD to use CosmoVisor
 
 
 # Run as normal User (NOT ROOT):
