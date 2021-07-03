@@ -1,0 +1,114 @@
+#!/bin/bash
+# shellcheck disable=SC1091
+#---------------------------------------------#
+#          Cosmovisor Migration Tool          #
+#---------------------------------------------#
+#              Version: V1.00                 #
+#          Donate BitCanna Address:           #
+# bcna14dz7zytpenkyyktqvzq2mw7msfyp0y3zg48xqw #
+#---------------------------------------------#
+
+########
+# EDIT #
+MONIKER="My Moniker" ## Set Your Moniker## 
+WALLETNAME="$MONIKER" ## Set Your Name Wallet
+TESTVER="v0.testnet7"
+########
+
+. CONFIG
+
+if [[ ! -f ${HOME}/.bcna/cosmovisor ]]; then
+ info "Creating cosmovisor directories..."
+ mkdir -p ${HOME}/.bcna/cosmovisor/genesis/bin
+ mkdir -p ${HOME}/.bcna/cosmovisor/upgrades/sativa/bin
+else
+ info "Moving old .bcna/cosmovisor folder"
+ mv ${HOME}/.bcna/cosmovisor ${HOME}/.bcna/cosmovisor."$DATENOW"
+ info "Creating cosmovisor directories..."
+ mkdir -p ${HOME}/.bcna/cosmovisor/genesis/bin
+ mkdir -p ${HOME}/.bcna/cosmovisor/upgrades/sativa/bin
+fi
+
+
+info "Get testnet7"
+wget https://github.com/BitCannaGlobal/testnet-bcna-cosmos/releases/download/$TESTVER/cosmovisor || erro "Cant download Cosmovisor "
+chmod +x cosmovisor
+sudo mv cosmovisor /usr/local/bin
+wget -nc https://github.com/BitCannaGlobal/testnet-bcna-cosmos/releases/download/$TESTVER/bcnad || erro "Cant download bcnad "
+
+if [[ $(sha256sum ./bcnad) == "d36d6df2a8155a92f4c6a9696ac38e4878ec750d5dff9ad8a5c5e3fadbea6edb" ]]; then 
+ ok "Checksum sha256sum  OK"
+else
+ erro "Checksum sha256sum  FAIL"
+fi
+chmod +x bcnad
+if [[ $(./bcnad version) == "$TESTVER" ]] ; then
+ mv ./bcnad ${HOME}/.bcna/cosmovisor/upgrades/sativa/bin/bcnad
+fi
+
+
+cp $(which bcnad) ${HOME}/.bcna/cosmovisor/genesis/bin/
+
+ln -s -T ${HOME}/.bcna/cosmovisor/genesis ${HOME}/.bcna/cosmovisor/current
+warn "You can check that everything is OK:"
+ls .bcna/cosmovisor/ -lh
+read -n 1 -s -r -p "$(info "Press any key to continue...")"
+
+echo "[Unit]
+Description=Cosmovisor BitCanna Service
+After=network-online.target
+[Service]
+User=${USER}
+Environment=DAEMON_NAME=bcnad
+Environment=DAEMON_RESTART_AFTER_UPGRADE=true
+Environment=DAEMON_HOME=${HOME}/.bcna
+ExecStart=$(which cosmovisor) start
+Restart=always
+RestartSec=3
+LimitNOFILE=4096
+[Install]
+WantedBy=multi-user.target
+" > /tmp/cosmovisor.service
+
+if sudo mv /tmp/cosmovisor.service /lib/systemd/system/ && sudo systemctl daemon-reload ; then
+ info "Check $BCNAD.service Stopped"
+ if sudo systemctl is-active "$BCNAD".service > /dev/null 2>&1 ; then
+  sudo systemctl stop "$BCNAD"
+  sudo systemctl disable "$BCNAD"
+  ok "$BCNAD Stopped and Disabled"
+ elif ! sudo systemctl is-active "$BCNAD".service > /dev/null 2>&1 ; then
+  info "$BCNAD.service already stopped"
+  sudo systemctl disable "$BCNAD"
+  ok "$BCNAD.service Disabled"
+ else
+  erro "Something wrong with $BCNAD.service"
+ fi
+ 
+ if sudo systemctl enable cosmovisor.service && sudo systemctl start cosmovisor.service ; then 
+  ok "Bitcanna-cosmovisor Service Enabled and Started"
+ else 
+  erro "Problem Enabling/Starting Bitcanna-cosmovisor Service"
+ fi
+else 
+ erro "Problem setting Bitcanna-cosmovisor Service"
+fi
+
+
+echo "export DAEMON_NAME=bcnad
+export DAEMON_RESTART_AFTER_UPGRADE=true
+export DAEMON_HOME=${HOME}/.bcna
+PATH=\"${HOME}/.bcna/cosmovisor/current/bin:$PATH\"" | tee -a ${HOME}/.profile
+source .profile
+
+info "Commands:"
+echo "Show cosmovisor Version: cosmovisor version
+Show bcna Version: bcnad version
+Show Sync info: cosmovisor status"
+
+if sudo rm /usr/local/bin/bcnad ; then
+ ok "bcnad removed"
+else
+ warn "Remove bcnad Manually. sudo rm /usr/local/bin/bcnad"
+fi
+
+
