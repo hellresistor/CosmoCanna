@@ -5,6 +5,8 @@
 #                  REQUIREMENTS                     #   
 #---------------------------------------------------#
 . CONFIG
+MYDEPPACKAGES=(build-essential curl wget jq ufw gnupg)
+
 #### Software Requisites
 info "Checking System Updates"
 if sudo apt-get -y update > /dev/null 2>&1 && sudo apt-get -y upgrade > /dev/null 2>&1 ; then
