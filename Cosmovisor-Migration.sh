@@ -101,11 +101,14 @@ PATH=\"${HOME}/.bcna/cosmovisor/current/bin:$PATH\"" | tee -a "${HOME}"/.profile
 source .profile
 
 info "Commands:"
-echo "Show cosmovisor Version: cosmovisor version
-Show bcna Version: bcnad version
-Show Sync info: cosmovisor status"
-info "Cosmovisor Service:"
-"$COSMOV"
+echo "Show cosmovisor Version: $COSMOV version
+Show BCNA Version: $BCNAD version
+Show Sync info: $COSMOV status"
+info "Cosmovisor Service:
+Stop Service: sudo service $COSMOV stop 
+Start Service: sudo service $COSMOV start
+Restart Service: sudo service $COSMOV restart
+Check LOGS: sudo journalctl -u $COSMOV -f"
 
 if sudo rm /usr/local/bin/bcnad ; then
  ok "bcnad removed"
