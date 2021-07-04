@@ -3,7 +3,7 @@
 #---------------------------------------------#
 #          Cosmovisor Migration Tool          #
 #---------------------------------------------#
-#              Version: V1.00                 #
+#              Version: V1.02                 #
 #          Donate BitCanna Address:           #
 # bcna14dz7zytpenkyyktqvzq2mw7msfyp0y3zg48xqw #
 #---------------------------------------------#
@@ -75,15 +75,16 @@ if sudo mv /tmp/"$COSMOV".service /lib/systemd/system/ && sudo systemctl daemon-
  if sudo systemctl is-active "$BCNAD".service > /dev/null 2>&1 ; then
   sudo systemctl stop "$BCNAD"
   sudo systemctl disable "$BCNAD"
-  ok "$BCNAD Stopped and Disabled"
+  sudo rm /lib/systemd/system/"$BCNAD".service
+  ok "$BCNAD Stopped, Disabled and Removed"
  elif ! sudo systemctl is-active "$BCNAD".service > /dev/null 2>&1 ; then
   info "$BCNAD.service already stopped"
   sudo systemctl disable "$BCNAD"
-  ok "$BCNAD.service Disabled"
+  sudo rm /lib/systemd/system/"$BCNAD".service
+  ok "$BCNAD.service Disabled and Removed"
  else
   erro "Something wrong with $BCNAD.service"
  fi
- 
  if sudo systemctl enable "$COSMOV".service && sudo systemctl start "$COSMOV".service ; then 
   ok "Bitcanna-cosmovisor Service Enabled and Started"
  else 
@@ -92,7 +93,6 @@ if sudo mv /tmp/"$COSMOV".service /lib/systemd/system/ && sudo systemctl daemon-
 else 
  erro "Problem setting Bitcanna-cosmovisor Service"
 fi
-
 
 echo "export DAEMON_NAME=bcnad
 export DAEMON_RESTART_AFTER_UPGRADE=true
@@ -115,5 +115,3 @@ if sudo rm /usr/local/bin/bcnad ; then
 else
  warn "Remove bcnad Manually. sudo rm /usr/local/bin/bcnad"
 fi
-
-
