@@ -5,15 +5,15 @@
 #                                                   #   
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V3.01                   #
+#                  Version: V3.02                   #
 #             Donate BitCanna Address:              #
 #    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
 #---------------------------------------------------#
 
 ########
 # EDIT #
-MONIKER="" ## Set Your Moniker## 
-WALLETNAME="$MONIKER" ## Set Your Name Wallet
+MONIKER="TESTEMONIKER" ## Set Your Moniker## 
+WALLETNAME="TESTEWALLET" ## Set Your Name Wallet
 CHAINID="bitcanna-testnet-4"  ## Set correct testnet
 
 . CONFIG
@@ -30,7 +30,7 @@ BCNACONF="$BCNADIR/config"
 BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 BCNAPORT="26656"
-SCRPTVER="V3.01"
+SCRPTVER="V3.02"
 DONATE="B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv"
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
@@ -121,7 +121,7 @@ elif [ "$choix" == "r" ] || [ "$choix" == "R" ]; then
  if [[ -a $(find "/usr/local/bin" -name "$BCNAD") ]] ; then
   info "Old Bitcanna-Cosmos version found"
   info "FULL REMOVING Bitcanna-Cosmos wallet"
-  if sudo systemctl stop "$BCNAD".service > /dev/null 2>&1 ; then
+  if sudo systemctl "$BCNAD".service stop > /dev/null 2>&1 ; then
    ok "Bitcanna Wallet Stopped"
   else 
    erro "Some Error on Stopping Wallet. Check it Manually"
@@ -129,8 +129,10 @@ elif [ "$choix" == "r" ] || [ "$choix" == "R" ]; then
   sleep 5
   cp -f -r --preserve "$BCNADIR" "$BCNAUSERHOME"/BCNABACKUP/.bcna."${DATENOW}" > /dev/null 2>&1 || erro "Cannot Copy $BCNADIR"
   cleaner
+  sudo systemctl "$BCNAD".service disable
   sudo rm -R "$BCNADIR" > /dev/null 2>&1 || erro "Cannot Delete $BCNADIR"
   sudo rm -f /usr/local/bin/"$BCNAD" > /dev/null 2>&1 || erro "Cannot Delete $BCNAD"
+  sudo rm /lib/systemd/system/"$BCNAD".service
   ok "Bitcanna-Cosmos wallet was FULLY Removed"
  else
    erro "Bitcanna-Cosmos wallet not exist\nInstall it\n"
@@ -144,6 +146,22 @@ function cleaner(){
 info "Cleaning...."
 sudo rm -r /tmp/*  > /dev/null 2>&1 && ok "/tmp folder cleaned"
 #history -cw
+}
+
+function syncr(){
+info "Syncronizing with Blockchain"
+NEEDED="420"
+while [ "$NEEDED" -gt "2" ]
+do 
+#clear
+bcnatimer
+warn "!!! PLEASE WAIT TO FULL SYNCRONIZATION !!!"
+NODEBLOCK=$(curl -s localhost:26657/status | jq .result.sync_info.latest_block_height | tr -d '"')
+CHAINBLOCK=$(curl -s "http://seed1.bitcanna.io:26657/status?"  | jq .result.sync_info.latest_block_height | tr -d '"')
+NEEDED="$(("$CHAINBLOCK" - "$NODEBLOCK"))"
+info "Remains: $NEEDED Blocks to full syncronization"
+sleep 5
+done
 }
 
 function SettingConnection(){
@@ -306,22 +324,6 @@ warn "TIME TO CLAIM/SEND YOUR COINS on Discord test channel. Execute: !claim $MY
 sleep 1
 warn "TIME TO CLAIM/SEND YOUR COINS on Discord test channel. Execute: !claim $MYWALLETADDR"
 read -n 1 -s -r -p "$(info "Press any key to continue...")"
-}
-
-function syncr(){
-info "Syncronizing with Blockchain"
-NEEDED="420"
-while [ "$NEEDED" -gt "1" ]
-do 
-clear
-bcnatimer
-warn "!!! PLEASE WAIT TO FULL SYNCRONIZATION !!!"
-NODEBLOCK=$(curl -s localhost:26657/status | jq .result.sync_info.latest_block_height | tr -d '"')
-CHAINBLOCK=$(curl -s "http://seed1.bitcanna.io:26657/status?"  | jq .result.sync_info.latest_block_height | tr -d '"')
-NEEDED="$(("$CHAINBLOCK" - "$NODEBLOCK"))"
-info "Remains: $NEEDED Blocks to full syncronization"
-sleep 7
-done
 }
 
 function backup(){
