@@ -130,14 +130,14 @@ elif [ "$choix" == "r" ] || [ "$choix" == "R" ]; then
   sleep 5
    cleaner
   sudo systemctl disable "$BCNAD".service
-  sudo rm -R "$BCNADIR" > /dev/null 2>&1 || warn "Cannot Delete $BCNADIR"
   sudo rm -f /usr/local/bin/"$BCNAD" > /dev/null 2>&1 || warn "Cannot Delete /usr/local/bin/$BCNAD"
   sudo rm /lib/systemd/system/"$BCNAD".service || warn "Cannot remove /lib/systemd/system/$BCNAD.service"
   if [[ ! -f "$BCNAUSERHOME"/BCNABACKUP ]]; then
    mkdir -p "$BCNAUSERHOME"/BCNABACKUP
   fi
   cp -f -r --preserve "$BCNADIR" "$BCNAUSERHOME"/BCNABACKUP/.bcna."${DATENOW}" > /dev/null 2>&1 || erro "Cannot Copy $BCNADIR"
- ok "Bitcanna-Cosmos wallet was FULLY Removed"
+  sudo rm -R "$BCNADIR" > /dev/null 2>&1 || warn "Cannot Delete $BCNADIR"
+  ok "Bitcanna-Cosmos wallet was FULLY Removed"
  else
    erro "Bitcanna-Cosmos wallet not exist\nInstall it\n"
  fi
