@@ -128,6 +128,9 @@ elif [ "$choix" == "r" ] || [ "$choix" == "R" ]; then
    warn "Some Error on Stopping Wallet. Check it Manually"
   fi
   sleep 5
+  if [[ ! -f "$BCNAUSERHOME"/BCNABACKUP ]]; then
+   mkdir -p "$BCNAUSERHOME"/BCNABACKUP
+  fi
   cp -f -r --preserve "$BCNADIR" "$BCNAUSERHOME"/BCNABACKUP/.bcna."${DATENOW}" > /dev/null 2>&1 || erro "Cannot Copy $BCNADIR"
   cleaner
   sudo systemctl disable "$BCNAD".service
