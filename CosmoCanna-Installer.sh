@@ -5,16 +5,16 @@
 #                                                   #   
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V3.02                   #
+#                  Version: V3.03                   #
 #             Donate BitCanna Address:              #
 #    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
 #---------------------------------------------------#
 
 ########
 # EDIT #
-MONIKER="TESTEMONIKER" ## Set Your Moniker## 
-WALLETNAME="TESTEWALLET" ## Set Your Name Wallet
-CHAINID="bitcanna-testnet-4"  ## Set correct testnet
+MONIKER="" ## Set Your Moniker## 
+WALLETNAME="${MONIKER}WALLET" ## Set Your Name Wallet
+CHAINID="bitcanna-testnet-4"  ## Set correct chain
 
 . CONFIG
 
@@ -22,15 +22,15 @@ function varys(){
 BCNACOSMOSREP="testnet-bcna-cosmos"
 BCNACOSMOSLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4 | head -1)
 GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/$BCNACOSMOSREP/main/instructions/stage4/genesis.json"
-PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656" # Comma separated values Ex: 123,123,123,123
-SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656"
+PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656"
+SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656,8e241ba2e8db2e83bb5d80473b4fd4d901043dda@178.128.247.173:26652"
 BCNAUSERHOME="$HOME"
 BCNADIR="$BCNAUSERHOME/.bcna"
 BCNACONF="$BCNADIR/config"
 BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 BCNAPORT="26656"
-SCRPTVER="V3.02"
+SCRPTVER="V3.03"
 DONATE="B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv"
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
@@ -105,12 +105,13 @@ elif [ "$choix" == "u" ] || [ "$choix" == "U" ]; then
     erro "Some Error on Starting Wallet. Check it Manually"
    fi
   sleep 5
-  sudo rm -f /usr/local/bin/"$BCNAD"
+  sudo rm -f /usr/local/bin/"$BCNAD" || erro "Unable to Delete: /usr/local/bin/"$BCNAD""
   bitcannacosmosdownload
   cleaner
   ok "Bitcanna-Cosmos wallet Updated to LAST version"
   if sudo systemctl start "$BCNAD".service > /dev/null 2>&1 ; then
    ok "Bitcanna Wallet Started"
+   sync
   else 
    erro "Some Error on Starting Wallet. Check it Manually"
   fi
@@ -121,18 +122,18 @@ elif [ "$choix" == "r" ] || [ "$choix" == "R" ]; then
  if [[ -a $(find "/usr/local/bin" -name "$BCNAD") ]] ; then
   info "Old Bitcanna-Cosmos version found"
   info "FULL REMOVING Bitcanna-Cosmos wallet"
-  if sudo systemctl "$BCNAD".service stop > /dev/null 2>&1 ; then
+  if sudo systemctl stop "$BCNAD".service > /dev/null 2>&1 ; then
    ok "Bitcanna Wallet Stopped"
   else 
-   erro "Some Error on Stopping Wallet. Check it Manually"
+   warn "Some Error on Stopping Wallet. Check it Manually"
   fi
   sleep 5
   cp -f -r --preserve "$BCNADIR" "$BCNAUSERHOME"/BCNABACKUP/.bcna."${DATENOW}" > /dev/null 2>&1 || erro "Cannot Copy $BCNADIR"
   cleaner
-  sudo systemctl "$BCNAD".service disable
-  sudo rm -R "$BCNADIR" > /dev/null 2>&1 || erro "Cannot Delete $BCNADIR"
-  sudo rm -f /usr/local/bin/"$BCNAD" > /dev/null 2>&1 || erro "Cannot Delete $BCNAD"
-  sudo rm /lib/systemd/system/"$BCNAD".service
+  sudo systemctl disable "$BCNAD".service
+  sudo rm -R "$BCNADIR" > /dev/null 2>&1 || warn "Cannot Delete $BCNADIR"
+  sudo rm -f /usr/local/bin/"$BCNAD" > /dev/null 2>&1 || warn "Cannot Delete /usr/local/bin/$BCNAD"
+  sudo rm /lib/systemd/system/"$BCNAD".service || warn "Cannot remove /lib/systemd/system/$BCNAD.service"
   ok "Bitcanna-Cosmos wallet was FULLY Removed"
  else
    erro "Bitcanna-Cosmos wallet not exist\nInstall it\n"
@@ -157,7 +158,7 @@ do
 bcnatimer
 warn "!!! PLEASE WAIT TO FULL SYNCRONIZATION !!!"
 NODEBLOCK=$(curl -s localhost:26657/status | jq .result.sync_info.latest_block_height | tr -d '"')
-CHAINBLOCK=$(curl -s "http://seed1.bitcanna.io:26657/status?"  | jq .result.sync_info.latest_block_height | tr -d '"')
+CHAINBLOCK=$(curl -s http://seed1.bitcanna.io:26657/status | jq .result.sync_info.latest_block_height | tr -d '"')
 NEEDED="$(("$CHAINBLOCK" - "$NODEBLOCK"))"
 info "Remains: $NEEDED Blocks to full syncronization"
 sleep 5
@@ -318,11 +319,11 @@ info "Lets Check Syncronization again"
 sleep 2
 syncr
 sleep 2
-warn "TIME TO CLAIM/SEND YOUR COINS on Discord test channel. Execute: !claim $MYWALLETADDR"
+warn "TIME TO CLAIM/SEND/ASK FOR COINS"
 sleep 1
-warn "TIME TO CLAIM/SEND YOUR COINS on Discord test channel. Execute: !claim $MYWALLETADDR"
+warn "TIME TO CLAIM/SEND/ASK FOR COINS"
 sleep 1
-warn "TIME TO CLAIM/SEND YOUR COINS on Discord test channel. Execute: !claim $MYWALLETADDR"
+warn "TIME TO CLAIM/SEND/ASK FOR COINS"
 read -n 1 -s -r -p "$(info "Press any key to continue...")"
 }
 
