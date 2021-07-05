@@ -128,16 +128,16 @@ elif [ "$choix" == "r" ] || [ "$choix" == "R" ]; then
    warn "Some Error on Stopping Wallet. Check it Manually"
   fi
   sleep 5
-  if [[ ! -f "$BCNAUSERHOME"/BCNABACKUP ]]; then
-   mkdir -p "$BCNAUSERHOME"/BCNABACKUP
-  fi
-  cp -f -r --preserve "$BCNADIR" "$BCNAUSERHOME"/BCNABACKUP/.bcna."${DATENOW}" > /dev/null 2>&1 || erro "Cannot Copy $BCNADIR"
-  cleaner
+   cleaner
   sudo systemctl disable "$BCNAD".service
   sudo rm -R "$BCNADIR" > /dev/null 2>&1 || warn "Cannot Delete $BCNADIR"
   sudo rm -f /usr/local/bin/"$BCNAD" > /dev/null 2>&1 || warn "Cannot Delete /usr/local/bin/$BCNAD"
   sudo rm /lib/systemd/system/"$BCNAD".service || warn "Cannot remove /lib/systemd/system/$BCNAD.service"
-  ok "Bitcanna-Cosmos wallet was FULLY Removed"
+  if [[ ! -f "$BCNAUSERHOME"/BCNABACKUP ]]; then
+   mkdir -p "$BCNAUSERHOME"/BCNABACKUP
+  fi
+  cp -f -r --preserve "$BCNADIR" "$BCNAUSERHOME"/BCNABACKUP/.bcna."${DATENOW}" > /dev/null 2>&1 || erro "Cannot Copy $BCNADIR"
+ ok "Bitcanna-Cosmos wallet was FULLY Removed"
  else
    erro "Bitcanna-Cosmos wallet not exist\nInstall it\n"
  fi
@@ -336,11 +336,11 @@ cd "$BCNACONF" || warn "Cannot access to .config file"
 if tar -czf "$BCNAUSERHOME"/BCNABACKUP/validator_key.tar.gz ./*_key.json  ; then
  ok "*_key.json files Compressed"
  if gpg -o "$BCNAUSERHOME"/BCNABACKUP/validator_key.tar.gz.gpg -ca "$BCNAUSERHOME"/BCNABACKUP/validator_key.tar.gz ; then
+  rm "$BCNAUSERHOME"/BCNABACKUP/validator_key.tar.gz
   ok "Keys saved and encrypted on $BCNAUSERHOME/BCNABACKUP/validator_key.tar.gz.gpg"
  else
   warn "FAILED Backing Up the KEYS! DO IT MANUALLY" 
  fi
- rm "$BCNAUSERHOME"/BCNABACKUP/validator_key.tar.gz
 else
  warn "*_key.json files NOT Compressed"
 fi
