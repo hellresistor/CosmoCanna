@@ -105,7 +105,7 @@ elif [ "$choix" == "u" ] || [ "$choix" == "U" ]; then
     erro "Some Error on Starting Wallet. Check it Manually"
    fi
   sleep 5
-  sudo rm -f /usr/local/bin/"$BCNAD" || erro "Unable to Delete: /usr/local/bin/"$BCNAD""
+  sudo rm -f /usr/local/bin/"$BCNAD" || erro "Unable to Delete: /usr/local/bin/$BCNAD"
   bitcannacosmosdownload
   cleaner
   ok "Bitcanna-Cosmos wallet Updated to LAST version"
