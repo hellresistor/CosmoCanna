@@ -13,6 +13,9 @@
 TESTVER="v0.testnet7"
 BCNAD="bcnad"
 COSMOV="cosmovisor"
+
+VERSIONNOW="" # Actual Version
+VERSIONUPGRADE="" # Upgrade Version
 ########
 
 . CONFIG
@@ -29,8 +32,7 @@ else
  mkdir -p "${HOME}"/.bcna/cosmovisor/upgrades/sativa/bin
 fi
 
-
-info "Get testnet7"
+info "Getting cosmovisor and bcnad"
 wget https://github.com/BitCannaGlobal/testnet-bcna-cosmos/releases/download/$TESTVER/cosmovisor || erro "Cant download Cosmovisor "
 if [[ $(sha256sum ./cosmovisor) == "5716eeef98f4f8efa98c95c234b539fdb9efca07c1b7e8c498cd5268dc1a5a8c" ]]; then 
  ok "Checksum sha256sum  OK"
