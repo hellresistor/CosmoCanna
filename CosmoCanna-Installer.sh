@@ -24,7 +24,7 @@ BCNACOSMOSLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCN
 GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/$BCNACOSMOSREP/main/instructions/stage5/genesis.json"
 #PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656"
 #SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656,8e241ba2e8db2e83bb5d80473b4fd4d901043dda@178.128.247.173:26652"
-PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656,8e241ba2e8db2e83bb5d80473b4fd4d901043dda@178.128.247.173:26656"
+PERSISTPEERS="acc177d5af9fad3064c1831bba41718d5f0ef2ce@167.71.0.53:26656,dcdc83e240eb046faabef62e4daf1cfcecfa93a2@159.65.198.245:26656"
 SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656,8e241ba2e8db2e83bb5d80473b4fd4d901043dda@178.128.247.173:26656"
 BCNAUSERHOME="$HOME"
 BCNADIR="$BCNAUSERHOME/.bcna"
@@ -266,9 +266,9 @@ if cp /tmp/genesis.json "$BCNACONF"/genesis.json > /dev/null 2>&1 ; then
 else 
  erro "genesis.json file NOT moved to $BCNAUSERHOME/$BCNACONF/genesis.json"
 fi
-sed -E -i "s/seeds = \".*\"/seeds = \"$SEEDS\"/" "$BCNACONF"/config.toml
-sed -E -i "s/persistent_peers = \".*\"/persistent_peers = \"$PERSISTPEERS\"/" "$BCNACONF"/config.toml
-sed -E -i "s/minimum-gas-prices = \".*\"/minimum-gas-prices = \"0.01ubcna\"/" "$BCNACONF"/app.toml
+sed -E -i "s/seeds = \".*\"/seeds = \"$SEEDS\"/" "$BCNACONF"/config.toml || erro "Cannot set seeds on config.toml file"
+sed -E -i "s/persistent_peers = \".*\"/persistent_peers = \"$PERSISTPEERS\"/" "$BCNACONF"/config.toml || erro "Cannot set persistpeers on config.toml file"
+sed -E -i "s/minimum-gas-prices = \".*\"/minimum-gas-prices = \"0.01ubcna\"/" "$BCNACONF"/app.toml || erro "Cannot set minimum-gas on app.toml file"
 
 if sudo systemctl is-active ufw > /dev/null; then
  ok "ufw Active"
@@ -403,9 +403,9 @@ if "$BCNAD" tx staking create-validator \
 --commission-max-change-rate 0.10 \
 --commission-max-rate 0.2 \
 --commission-rate 0.1 \
---from "$WALLETNAME" \
+--from \""$WALLETNAME"\" \
 --min-self-delegation 1 \
---moniker "$MONIKER" \
+--moniker \""$MONIKER"\" \
 --pubkey "$($BCNAD tendermint show-validator)" \
 --chain-id "$CHAINID" \
 --gas auto \
