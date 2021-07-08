@@ -32,10 +32,17 @@ fi
 
 info "Get testnet7"
 wget https://github.com/BitCannaGlobal/testnet-bcna-cosmos/releases/download/$TESTVER/cosmovisor || erro "Cant download Cosmovisor "
+if [[ $(sha256sum ./cosmovisor) == "5716eeef98f4f8efa98c95c234b539fdb9efca07c1b7e8c498cd5268dc1a5a8c" ]]; then 
+ ok "Checksum sha256sum  OK"
+else
+ erro "Checksum sha256sum  FAIL"
+fi
 chmod +x cosmovisor
-sudo mv cosmovisor /usr/local/bin
-wget -nc https://github.com/BitCannaGlobal/testnet-bcna-cosmos/releases/download/$TESTVER/bcnad || erro "Cant download bcnad "
+if [[ $(./cosmovisor version) == "$TESTVER" ]] ; then
+ sudo mv cosmovisor /usr/local/bin || erro "Cannot copy cosmovisor to /usr/local/bin directory"
+fi
 
+wget -nc https://github.com/BitCannaGlobal/testnet-bcna-cosmos/releases/download/$TESTVER/bcnad || erro "Cant download bcnad "
 if [[ $(sha256sum ./bcnad) == "d36d6df2a8155a92f4c6a9696ac38e4878ec750d5dff9ad8a5c5e3fadbea6edb" ]]; then 
  ok "Checksum sha256sum  OK"
 else
@@ -46,9 +53,7 @@ if [[ $(./bcnad version) == "$TESTVER" ]] ; then
  mv ./bcnad "${HOME}"/.bcna/cosmovisor/upgrades/sativa/bin/bcnad
 fi
 
-
-cp "$(command -v bcnad)" "${HOME}"/.bcna/cosmovisor/genesis/bin/
-
+cp "$(command -v bcnad)" "${HOME}"/.bcna/cosmovisor/genesis/bin/ || erro "Unable copy bcnad to ${HOME}/.bcna/cosmovisor/genesis/bin/ directory"
 ln -s -T "${HOME}"/.bcna/cosmovisor/genesis "${HOME}"/.bcna/cosmovisor/current
 warn "You can check that everything is OK:"
 ls .bcna/cosmovisor/ -lh
