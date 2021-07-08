@@ -21,7 +21,7 @@ fi
 
 info "Syncronizing with Blockchain"
 NEEDED="420"
-while [ $(curl -s localhost:26657/status  | jq .result.sync_info.catching_up) == "true" ]
+while [ "$(curl -s localhost:26657/status  | jq .result.sync_info.catching_up)" == "true" ]
 do 
 clear
 bcnatimer
