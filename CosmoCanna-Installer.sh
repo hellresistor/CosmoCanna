@@ -156,17 +156,16 @@ sudo rm -r /tmp/*  > /dev/null 2>&1 && ok "/tmp folder cleaned"
 
 function syncr(){
 info "Syncronizing with Blockchain"
-NEEDED="420"
-while [ "$NEEDED" -gt "2" ]
+while [ $(curl -s localhost:26657/status  | jq .result.sync_info.catching_up) == "true" ]
 do 
-#clear
+clear
 bcnatimer
 warn "!!! PLEASE WAIT TO FULL SYNCRONIZATION !!!"
 NODEBLOCK=$(curl -s localhost:26657/status | jq .result.sync_info.latest_block_height | tr -d '"')
-CHAINBLOCK=$(curl -s http://seed1.bitcanna.io:26657/status | jq .result.sync_info.latest_block_height | tr -d '"')
+CHAINBLOCK=$(curl -s http://seed1.bitcanna.io:26657/status  | jq .result.sync_info.latest_block_height | tr -d '"')
 NEEDED="$(("$CHAINBLOCK" - "$NODEBLOCK"))"
 info "Remains: $NEEDED Blocks to full syncronization"
-sleep 5
+sleep 7
 done
 }
 
