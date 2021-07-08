@@ -156,7 +156,7 @@ sudo rm -r /tmp/*  > /dev/null 2>&1 && ok "/tmp folder cleaned"
 
 function syncr(){
 info "Syncronizing with Blockchain"
-while [ $(curl -s localhost:26657/status  | jq .result.sync_info.catching_up) == "true" ]
+while [ "$(curl -s localhost:26657/status  | jq .result.sync_info.catching_up)" == "true" ]
 do 
 clear
 bcnatimer
