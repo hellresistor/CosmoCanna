@@ -5,12 +5,12 @@
 #                                                 #   
 #-------------------------------------------------#
 #-------------------------------------------------#
-#                  Version: V1.00                 #
+#                  Version: V2.00                 #
 #             Donate BitCanna Address:            #
 #   bcna14dz7zytpenkyyktqvzq2mw7msfyp0y3zg48xqw   #
 #-------------------------------------------------#
 
-.CONFIG
+. CONFIG
 
 info "Check bcnad.service/cosmovisor.service Running"
 if sudo systemctl is-active bcnad.service > /dev/null 2>&1 || sudo systemctl is-active cosmovisor.service > /dev/null 2>&1 ; then
@@ -21,13 +21,13 @@ fi
 
 info "Syncronizing with Blockchain"
 NEEDED="420"
-while [ "$NEEDED" -gt "4" ]
+while [ $(curl -s localhost:26657/status  | jq .result.sync_info.catching_up) == "true" ]
 do 
 clear
 bcnatimer
 warn "!!! PLEASE WAIT TO FULL SYNCRONIZATION !!!"
 NODEBLOCK=$(curl -s localhost:26657/status | jq .result.sync_info.latest_block_height | tr -d '"')
-CHAINBLOCK=$(curl -s "http://seed1.bitcanna.io:26657/status?"  | jq .result.sync_info.latest_block_height | tr -d '"')
+CHAINBLOCK=$(curl -s http://seed1.bitcanna.io:26657/status  | jq .result.sync_info.latest_block_height | tr -d '"')
 NEEDED="$(("$CHAINBLOCK" - "$NODEBLOCK"))"
 info "Remains: $NEEDED Blocks to full syncronization"
 sleep 7
