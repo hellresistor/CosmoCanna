@@ -5,7 +5,7 @@
 #                                                   #   
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V3.03                   #
+#                  Version: V3.05                   #
 #             Donate BitCanna Address:              #
 #    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
 #---------------------------------------------------#
@@ -14,23 +14,25 @@
 # EDIT #
 MONIKER="" ## Set Your Moniker## 
 WALLETNAME="${MONIKER}WALLET" ## Set Your Name Wallet
-CHAINID="bitcanna-testnet-4"  ## Set correct chain
+CHAINID="bitcanna-testnet-5"  ## Set correct chain
 
 . CONFIG
 
 function varys(){
 BCNACOSMOSREP="testnet-bcna-cosmos"
 BCNACOSMOSLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4 | head -1)
-GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/$BCNACOSMOSREP/main/instructions/stage4/genesis.json"
-PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656"
-SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656,8e241ba2e8db2e83bb5d80473b4fd4d901043dda@178.128.247.173:26652"
+GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/$BCNACOSMOSREP/main/instructions/stage5/genesis.json"
+#PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656"
+#SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656,8e241ba2e8db2e83bb5d80473b4fd4d901043dda@178.128.247.173:26652"
+PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656,8e241ba2e8db2e83bb5d80473b4fd4d901043dda@178.128.247.173:26656"
+SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656,8e241ba2e8db2e83bb5d80473b4fd4d901043dda@178.128.247.173:26656"
 BCNAUSERHOME="$HOME"
 BCNADIR="$BCNAUSERHOME/.bcna"
 BCNACONF="$BCNADIR/config"
 BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 BCNAPORT="26656"
-SCRPTVER="V3.03"
+SCRPTVER="V3.05"
 DONATE="B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv"
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
