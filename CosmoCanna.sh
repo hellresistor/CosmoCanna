@@ -21,7 +21,7 @@ fi
 }
 
 function getwalletinfo(){
-BCNACHAINID="bitcanna-testnet-4"
+BCNACHAINID="bitcanna-testnet-5"
 GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
 MYMoniker=$(curl http://localhost:26657/status | grep -Po '"moniker": "\K.*?(?=")')
 MYVALIDADDRESS=$(curl -s http://localhost:26657/genesis | grep -A13 "$MYMoniker" | tail -n1 | grep -Po '"validator_address": "\K.*?(?=")')
