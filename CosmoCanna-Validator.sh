@@ -10,9 +10,9 @@
 
 ########
 # EDIT #
-MONIKER="My Moniker" ## Set Your Moniker## 
+MONIKER="" ## Set Your Moniker## 
 WALLETNAME="$MONIKER" ## Set Your Name Wallet
-CHAINID="bitcanna-testnet-4"  ## Set correct testnet
+CHAINID="bitcanna-testnet-5"  ## Set correct testnet
 ########
 
 . CONFIG
@@ -20,7 +20,7 @@ CHAINID="bitcanna-testnet-4"  ## Set correct testnet
 function varys(){
 BCNACOSMOSREP="testnet-bcna-cosmos"
 BCNACOSMOSLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4)
-GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/$BCNACOSMOSREP/main/instructions/stage4/genesis.json"
+GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/$BCNACOSMOSREP/main/instructions/stage5/genesis.json"
 PERSISTPEERS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656" # Comma separated values Ex: 123,123,123,123
 SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,41d373d03f93a3dc883ba4c1b9b7a781ead53d76@seed2.bitcanna.io:16656"
 BCNAUSERHOME="$HOME"
