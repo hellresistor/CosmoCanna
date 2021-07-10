@@ -3,7 +3,7 @@
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
-#            Version: V2.10                 #
+#            Version: V2.20                 #
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
@@ -24,6 +24,7 @@ function getwalletinfo(){
 BCNACHAINID="bitcanna-testnet-5"
 GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
 MYMoniker=$(curl http://localhost:26657/status | grep -Po '"moniker": "\K.*?(?=")')
+MYWALLETNAME="$MYMoniker"
 MYVALIDADDRESS=$(curl -s http://localhost:26657/genesis | grep -A13 "$MYMoniker" | tail -n1 | grep -Po '"validator_address": "\K.*?(?=")')
 MYDELEGADDRESS=$(curl -s http://localhost:26657/genesis | grep -A12 "$MYMoniker" | tail -n1 | grep -Po '"delegator_address": "\K.*?(?=")')
 MYADDRESS=$MYDELEGADDRESS
@@ -33,33 +34,68 @@ MyRewardBalance=$(bcnad query distribution rewards "$MYDELEGADDRESS" --output js
 }
 
 function setsourcewaddress(){
+while true 
+do
 info "Put Source Wallet address:"
 read -r THESWADDRESS
 THESWADDRESS=${THESWADDRESS:-$MYADDRESS}
+case "$THESWADDRESS" in
+ bcna*) ok "Valid Bitcanna Address" ; break ;;
+ *)  warn "Invalid Bitcanna Address" ;;
+esac
+done
 }
 
 function setdestwaddress(){
+while true 
+do
 info "Put Target Wallet address:"
 read -r THEDWADDRESS
 THEDWADDRESS=${THEDWADDRESS:-$MYADDRESS}
+case "$THEDWADDRESS" in
+ bcna*) ok "Valid Bitcanna Address" ; break ;;
+ *)  warn "Invalid Bitcanna Address" ;;
+esac
+done
 }
 
 function setamount(){
+while true 
+do
 info "Put Amount (1.000.000ubcna = 1BCNA):"
 read -r THEAMOUNT
 THEAMOUNT=${THEAMOUNT:-$MYAMOUNT}
+case $THEAMOUNT in
+ ''|*[0-9]*) ok "Valid Amount" ; break ;;
+ *) warn "Invalid Amount" ;;
+esac
+done
 }
 
 function setsourceoaddress(){
+while true 
+do
 info "Put Target Validator/Operator address:"
 read -r THESOADDRESS
 THESOADDRESS=${THESOADDRESS:-$MYVALIDADDRESS}
+case "$THESOADDRESS" in
+ bcnavaloper*) ok "Valid Bitcanna Address" ; break ;;
+ *)  warn "Invalid Bitcanna Address" ;;
+esac
+done
 }
 
 function setdestoaddress(){
+while true 
+do
 info "Put Target Validator/Operator address:"
 read -r THEDOADDRESS
 THEDOADDRESS=${THEDOADDRESS:-$MYVALIDADDRESS}
+case "$THEDOADDRESS" in
+ bcnavaloper*) ok "Valid Bitcanna Address" ; break ;;
+ *)  warn "Invalid Bitcanna Address" ;;
+esac
+done
 }
 
 function menu(){
@@ -82,7 +118,7 @@ Menu:
 2- Delegate
 3- Redelegate
 4- Send Coins
-5-
+5- Edit Validator
 6- Unbond
 7- Unjail Validator
 
@@ -103,7 +139,14 @@ case $choicy in
     setdestwaddress
     setamount
     bcnad tx bank send "$THESWADDRESS" "$THEDWADDRESS" "$THEAMOUNT"ubcna -y "$GASFEE" --memo "Send Bcna by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
- 5)  ;;
+ 5) info "Set your Website"
+    read -r MYWEBSITE
+    info "Set your PGP Keybase key"
+    read -r MYPGPKEY
+    info "Set Some Details"
+    read -r MYDETAILS
+    bcnad tx staking edit-validator --moniker \""$MYMoniker"\" --website \""$MYWEBSITE"\" --identity \""$MYPGPKEY"\" --details \""$MYDETAILS"\" --from \""$MYWALLETNAME"\" --memo "Edit Validator by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" "$GASFEE"
+    ;;
  6) setdestwaddress
     setamount
     bcnad tx staking unbond "$THEDWADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" "$GASFEE" --memo "Unbond by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
