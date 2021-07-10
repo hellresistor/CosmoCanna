@@ -3,7 +3,7 @@
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
-#            Version: V2.20                 #
+#            Version: V2.30                 #
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
@@ -25,8 +25,8 @@ BCNACHAINID="bitcanna-testnet-5"
 GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
 MYMoniker=$(curl http://localhost:26657/status | grep -Po '"moniker": "\K.*?(?=")')
 MYWALLETNAME="$MYMoniker"
-MYVALIDADDRESS=$(curl -s http://localhost:26657/genesis | grep -A13 "$MYMoniker" | tail -n1 | grep -Po '"validator_address": "\K.*?(?=")')
-MYDELEGADDRESS=$(curl -s http://localhost:26657/genesis | grep -A12 "$MYMoniker" | tail -n1 | grep -Po '"delegator_address": "\K.*?(?=")')
+MYVALIDADDRESS=$(bcnad query staking validators --output json | jq | grep -B10 "$MYMoniker" | head -n1 | grep -Po '"operator_address": "\K.*?(?=")')
+MYDELEGADDRESS=$(bcnad keys show $MYWALLETNAME -a)
 MYADDRESS=$MYDELEGADDRESS
 MYAvaliableBal=$(bcnad query bank balances "$MYDELEGADDRESS" --output json | jq | grep -Po '"amount": "\K.*?(?=")')
 MYCommiBalance=$(bcnad query distribution commission "$MYVALIDADDRESS" --output json | jq  | grep -Po '"amount": "\K.*?(?=")')
