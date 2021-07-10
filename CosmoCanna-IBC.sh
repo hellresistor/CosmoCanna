@@ -44,22 +44,33 @@ function
 
 function configvarys(){
 info "Set variables to Microtick Tool... Insert Password when asked"
-export MT_ADDR="$(mtm keys show $MICROTICKWALLETNAME -a)"
-export MT_RPC="http://seed2.bitcanna.io:26657"
-export MT_chain="microtick-testnet-rc8-1"
-export MT_channel="channel-3"
-export MT_port="transfer"
+MT_ADDR="$(mtm keys show $MICROTICKWALLETNAME -a)"
+MT_RPC="http://seed2.bitcanna.io:26657"
+MT_chain="microtick-testnet-rc8-1"
+MT_channel="channel-3"
+MT_port="transfer"
+export MT_ADDR
+export MT_RPC
+export MT_chain
+export MT_channel
+export MT_port
 info "Set variables to BCNAD... Insert Password when asked"
-export BCNA_ADDR="$(bcnad keys show $BITCANNAWALLETNAME -a)"
-export BCNA_RPC="http://seed2.bitcanna.io:16657"
-export BCNA_chain="bitcanna-testnet-5"
-export BCNA_channel="channel-0"
-export BCNA_port="transfer"
-export GASFLAG="--gas auto --gas-prices 0.09ubcna --gas-adjustment 1.5  --packet-timeout-timestamp 6000000000000"
+BCNA_ADDR="$(bcnad keys show $BITCANNAWALLETNAME -a)"
+BCNA_RPC="http://seed2.bitcanna.io:16657"
+BCNA_chain="bitcanna-testnet-5"
+BCNA_channel="channel-0"
+BCNA_port="transfer"
+GASFLAG="--gas auto --gas-prices 0.09ubcna --gas-adjustment 1.5  --packet-timeout-timestamp 6000000000000"
+export BCNA_ADDR
+export BCNA_RPC
+export BCNA_chain
+export BCNA_channel
+export BCNA_port
+export GASFLAG
 }
 
 function getinfo(){
-export BCNAMoniker=$(curl -s http://localhost:26657/status | grep -Po '"moniker": "\K.*?(?=")')
+BCNAMoniker=$(curl -s http://localhost:26657/status | grep -Po '"moniker": "\K.*?(?=")')
 BCNABALANCE="$(bcnad query bank balances "$BCNA_ADDR" --output json | jq | grep -Po '"amount": "\K.*?(?=")' | tail -1)"
 BCNADENOM="$(bcnad query bank balances "$BCNA_ADDR" --output json | jq | grep -Po '"denom": "\K.*?(?=")' | tail -1)"
 BCNAIBCBALANCE="$(bcnad query bank balances "$BCNA_ADDR" --output json | jq | grep -Po '"amount": "\K.*?(?=")' | head -1)"
@@ -168,7 +179,7 @@ else
 fi
 }
 
-function createmicrotickwallet{
+function createmicrotickwallet(){
 while true
 do
 info "Choose to get New Microtick WALLET or to RECOVER your WALLET:\n\t J - by *.tar.gz (NOT WORKIN)\n\t G - by *.tar.gz.gpg (GPG Encryption method) (NOT WORKIN)\n\t C - Create New Wallet\n\t E - Exit wallet creation"
