@@ -94,7 +94,7 @@ read -r THEAMOUNT
 THEAMOUNT=${THEAMOUNT:-$DEFAULTAMOUNT}
 case $THEAMOUNT in
  ''|*[0-9]*) ok "Valid Amount" ; break ;;
- *) warn "Invalid Amount"" ;;
+ *) warn "Invalid Amount" ;;
 esac
 done
 }
