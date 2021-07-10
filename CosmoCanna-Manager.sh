@@ -26,7 +26,7 @@ GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
 MYMoniker=$(curl http://localhost:26657/status | grep -Po '"moniker": "\K.*?(?=")')
 MYWALLETNAME="$MYMoniker"
 MYVALIDADDRESS=$(bcnad query staking validators --output json | jq | grep -B10 "$MYMoniker" | head -n1 | grep -Po '"operator_address": "\K.*?(?=")')
-MYDELEGADDRESS=$(bcnad keys show $MYWALLETNAME -a)
+MYDELEGADDRESS=$(bcnad keys show "$MYWALLETNAME" -a)
 MYADDRESS=$MYDELEGADDRESS
 MYAvaliableBal=$(bcnad query bank balances "$MYDELEGADDRESS" --output json | jq | grep -Po '"amount": "\K.*?(?=")')
 MYCommiBalance=$(bcnad query distribution commission "$MYVALIDADDRESS" --output json | jq  | grep -Po '"amount": "\K.*?(?=")')
