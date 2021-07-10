@@ -3,7 +3,7 @@
 #---------------------------------------------#
 #             IBC Transfer Tool               #
 #---------------------------------------------#
-#              Version: V1.02                 #
+#              Version: V1.03                 #
 #          Donate BitCanna Address:           #
 # bcna14dz7zytpenkyyktqvzq2mw7msfyp0y3zg48xqw #
 #---------------------------------------------#
@@ -20,26 +20,6 @@ DEFAULTAMOUNT="1000000" # 1 000 000 ubcna = 1 BCNA || 1 000 000 utick = 1 TICK
 ########
 
 . CONFIG
-
-if [ -z "$MICROTICKWALLETNAME" ]; then
- erro "Set MICROTICK WALLET NAME on this script file ..."
-fi
-if [ -z "$BITCANNAWALLETNAME" ]; then
- erro "Set BITCANNA WALLET NAME on this script file ..."
-fi
-
-if command -v mtm; then
- configvarys
- getinfo
- mainmenu
-else
- info "Microtick Tool not installed.... Installing it.."
- installmicrotick
- createmicrotickwallet
- configvarys
-fi
-
-function 
 
 function configvarys(){
 info "Set variables to Microtick Tool... Insert Password when asked"
@@ -232,6 +212,20 @@ esac
 done
 }
 
+if [ -z "$MICROTICKWALLETNAME" ]; then
+ erro "Set MICROTICK WALLET NAME on this script file ..."
+fi
+if [ -z "$BITCANNAWALLETNAME" ]; then
+ erro "Set BITCANNA WALLET NAME on this script file ..."
+fi
 
-
-
+if command -v mtm; then
+ configvarys
+ getinfo
+ mainmenu
+else
+ info "Microtick Tool not installed.... Installing it.."
+ installmicrotick
+ createmicrotickwallet
+ configvarys
+fi
