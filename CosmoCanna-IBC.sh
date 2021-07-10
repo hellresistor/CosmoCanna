@@ -1,9 +1,9 @@
 #!/bin/bash
-# shellcheck disable=SC1091,SC2154
+# shellcheck disable=SC1091
 #---------------------------------------------#
 #             IBC Transfer Tool               #
 #---------------------------------------------#
-#              Version: V1.00                 #
+#              Version: V1.02                 #
 #          Donate BitCanna Address:           #
 # bcna14dz7zytpenkyyktqvzq2mw7msfyp0y3zg48xqw #
 #---------------------------------------------#
@@ -122,7 +122,7 @@ IBC Balance:${endy} ${yellowy}$BCNAIBCBALANCE $BCNAIBCDENOM${endy}
 
 ${bluey}===========================================================================================
 ===========================================================================================${endy}
-                    Microtick Wallet${endy}
+                    ${yellowy}Microtick Wallet${endy}
 ${bluey}-------------------------------------------------------------------------------------------${endy}
 Address:${endy} $MT_ADDR${endy}
 ${bluey}-------------------------------------------------------------------------------------------${endy}
