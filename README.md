@@ -2,7 +2,7 @@
 [![ShellLinter](https://github.com/hellresistor/CosmoCanna/actions/workflows/main.yml/badge.svg)](https://github.com/hellresistor/CosmoCanna/actions/workflows/main.yml)
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 
-# CosmoCanna
+# CosmoCanna (TESTNET!!!)
 Bitcanna Cosmos Lazy Tool includes:
   - CosmoCanna.sh           - A Lazy tool to Manage your wallet
   - CosmoCanna-Validator.sh - A tool to Generate Genesis Account and JSON file and configure validator security
