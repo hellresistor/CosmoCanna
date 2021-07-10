@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck disable=SC1091
+# shellcheck disable=SC1091,SC2154
 #---------------------------------------------#
 #             IBC Transfer Tool               #
 #---------------------------------------------#
@@ -20,7 +20,6 @@ DEFAULTAMOUNT="1000000" # 1 000 000 ubcna = 1 BCNA || 1 000 000 utick = 1 TICK
 ########
 
 . CONFIG
-
 
 if [ -z "$MICROTICKWALLETNAME" ]; then
  erro "Set MICROTICK WALLET NAME on this script file ..."
