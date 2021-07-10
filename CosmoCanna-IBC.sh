@@ -3,7 +3,7 @@
 #---------------------------------------------#
 #             IBC Transfer Tool               #
 #---------------------------------------------#
-#              Version: V1.03                 #
+#              Version: V1.04                 #
 #          Donate BitCanna Address:           #
 # bcna14dz7zytpenkyyktqvzq2mw7msfyp0y3zg48xqw #
 #---------------------------------------------#
@@ -61,33 +61,68 @@ MTMIBCDENOM="$(mtm query bank balances "$MT_ADDR" --node $MT_RPC --output json |
 }
 
 function setsourceMTaddress(){
+while true 
+do
 info "Put Source Microtick address:"
 read -r THESMTADDRESS
 THESMTADDRESS=${THESMTADDRESS:-$MT_ADDR}
+case "$THESMTADDRESS" in
+ micro*) ok "Valid Microtick Address" ; break ;;
+ *)  warn "Invalid Microtick Address" ;;
+esac
+done
 }
 
 function setdestMTaddress(){
+while true 
+do
 info "Put Target Microtick address:"
 read -r THETMTADDRESS
 THETMTADDRESS=${THETMTADDRESS:-$MT_ADDR}
-}
+case "$THETMTADDRESS" in
+ micro*) ok "Valid Microtick Address" ; break ;;
+ *)  warn "Invalid Microtick Address" ;;
+esac
+done
+} 
 
 function setamount(){
+while true 
+do
 info "Put Amount in micro (ubcna/utick):"
 read -r THEAMOUNT
 THEAMOUNT=${THEAMOUNT:-$DEFAULTAMOUNT}
+case $THEAMOUNT in
+ ''|*[0-9]*) ok "Valid Amount" ; break ;;
+ *) warn "Invalid Amount"" ;;
+esac
+done
 }
 
 function setsourceBCNAaddress(){
+while true 
+do
 info "Put Target BCNA address:"
 read -r THESBCNAADDRESS
 THESBCNAADDRESS=${THESBCNAADDRESS:-$BCNA_ADDR}
+case "$THESBCNAADDRESS" in
+ bcna*) ok "Valid Bitcanna Address" ; break ;;
+ *)  warn "Invalid Bitcanna Address" ;;
+esac
+done
 }
 
 function setdestBCNAaddress(){
+while true 
+do
 info "Put Target BCNA address:"
 read -r THETBCNAADDRESS
 THETBCNAADDRESS=${THETBCNAADDRESS:-$BCNA_ADDR}
+case "$THETBCNAADDRESS" in
+ bcna*) ok "Valid Bitcanna Address" ; break ;;
+ *)  warn "Invalid Bitcanna Address" ;;
+esac
+done
 }
 
 function mainmenu(){
