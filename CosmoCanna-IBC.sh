@@ -133,15 +133,19 @@ case $choicy in
  1) setdestMTaddress
     setamount
     bcnad tx ibc-transfer transfer "$BCNA_port" "$BCNA_channel" "$THETMTADDRESS" "$THEAMOUNT""$BCNADENOM" --chain-id "$BCNA_chain" --from "$BITCANNAWALLETNAME" -y "$GASFLAG"
+    ;;
  2) setdestBCNAaddress
     setamount
     mtm tx ibc-transfer transfer "$MT_port" "$MT_channel" "$THETBCNAADDRESS" "$THEAMOUNT""$MTMIBCDENOM" --chain-id "$MT_chain" --from "$MICROTICKWALLETNAME" -y "$GASFLAG" --node "$MT_RPC"
+    ;;
  3) setdestBCNAaddress
     setamount
     mtm tx ibc-transfer transfer "$MT_port" "$MT_channel" "$THETBCNAADDRESS" "$THEAMOUNT""$MTMDENOM" --chain-id "$MT_chain" --from "$MICROTICKWALLETNAME" -y "$GASFLAG" --node "$MT_RPC"
+    ;;
  4) setdestMTaddress
     setamount
     bcnad tx ibc-transfer transfer "$BCNA_port" "$BCNA_channel" "$THETMTADDRESS" "$THEAMOUNT""$BCNAIBCDENOM" --chain-id "$BCNA_chain" --from "$BITCANNAWALLETNAME" -y "$GASFLAG"
+    ;;
 q|Q) ok "Bye Bye Roll One joint for me ;)" && exit 0 ;;
  *) warn "MISSING KEY" && sleep 0.5 ;;
 esac
