@@ -1,13 +1,20 @@
 #!/bin/bash
 
 #### Rainbowing our lives
-export bluey=$'\e[94m'
-export boldy=$'\e[1m'
-export endy=$'\e[0m'
-export greeny=$'\e[92m'
-export greyy=$'\e[37m'
-export redy=$'\e[91m'
-export yellowy=$'\e[93m'
+bluey=$'\e[94m'
+boldy=$'\e[1m'
+endy=$'\e[0m'
+greeny=$'\e[92m'
+greyy=$'\e[37m'
+redy=$'\e[91m'
+yellowy=$'\e[93m'
+export bluey
+export boldy
+export endy
+export greeny
+export greyy
+export redy
+export yellowy
 
 #### Some personalized messages
 function bcnatimer { echo -e "${redy}      __   __     _____   ______ \n${redy}     /__/\/__/\  /_____/\/_____/\ \n${redy}     \  \ \\${greeny}: ${redy}\ \_\\${greeny}:::${redy}_${greeny}:${redy}\ \\${greeny}:::${redy}_ \ \ \n${redy}      \\${greeny}::${redy}\_\\${greeny}::${redy}\/_/\  _\\${greeny}:${redy}\|\\${greeny}:${redy}\ \ \ \ \n${redy}       \_${greeny}:::   ${redy}__\/ /${greeny}::${redy}_/__\\${greeny}:${redy}\ \ \ \   \n${redy}            \\${greeny}::${redy}\ \  \\${greeny}:${redy}\____/\\${greeny}:${redy}\_\ \ \  \n${redy}             \__\/   \_____\/\_____\/\n${greeny}     T I M E${endy}" ; }
