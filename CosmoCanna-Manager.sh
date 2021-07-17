@@ -7,21 +7,8 @@
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
-. CONFIG
 
-function checkservicestatus(){
-if systemctl --all --type service | grep -q bcnad ; then
- MYSERVICE="bcnad"
-elif systemctl --all --type service | grep -q cosmovisor ; then
- MYSERVICE="cosmovisor"
-fi
-info "Check $MYSERVICE.service Running"
-if sudo systemctl is-active "$MYSERVICE".service > /dev/null 2>&1 ; then
- ok "$MYSERVICE.service Is Running"
-else
- erro "Run: sudo systemctl start $MYSERVICE.service"
-fi
-}
+. CONFIG
 
 function getwalletinfo(){
 MYMoniker=$(curl http://localhost:26657/status | grep -Po '"moniker": "\K.*?(?=")')
@@ -35,6 +22,20 @@ MYAvaliableBal=$(bcnad query bank balances "$MYDELEGADDRESS" --output json | jq 
 MYCommiBalance=$(bcnad query distribution commission "$MYVALIDADDRESS" --output json | jq  | grep -Po '"amount": "\K.*?(?=")')
 MyRewardBalance=$(bcnad query distribution rewards "$MYDELEGADDRESS" --output json --chain-id "$BCNACHAINID" | jq | grep -A4 "total" |  grep -Po '"amount": "\K.*?(?=")')
 export MYMoniker
+}
+
+function checkservicestatus(){
+if systemctl --all --type service | grep -q bcnad ; then
+ MYSERVICE="bcnad"
+elif systemctl --all --type service | grep -q cosmovisor ; then
+ MYSERVICE="cosmovisor"
+fi
+info "Check $MYSERVICE.service Running"
+if sudo systemctl is-active "$MYSERVICE".service > /dev/null 2>&1 ; then
+ ok "$MYSERVICE.service Is Running"
+else
+ erro "Run: sudo systemctl start $MYSERVICE.service"
+fi
 }
 
 function setsourcewaddress(){
