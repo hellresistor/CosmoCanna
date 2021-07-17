@@ -3,20 +3,23 @@
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
-#            Version: V2.30                 #
+#            Version: V2.40                 #
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
 . CONFIG
 
 function checkservicestatus(){
-info "Check bcnad.service/cosmovisor.service Running"
-if sudo systemctl is-active bcnad.service > /dev/null 2>&1 || sudo systemctl is-active cosmovisor.service > /dev/null 2>&1 ; then
- ok "bcnad Is Running"
-elif ! sudo systemctl is-active bcnad.service > /dev/null 2>&1 || sudo systemctl is-active cosmovisor.service > /dev/null 2>&1 ; then
- erro "bcnad is Stopped. Run: sudo systemctl start bcnad.service/cosmovisor.service"
+if systemctl --all --type service | grep -q bcnad ; then
+ MYSERVICE="bcnad"
+elif systemctl --all --type service | grep -q cosmovisor ; then
+ MYSERVICE="cosmovisor"
+fi
+info "Check $MYSERVICE.service Running"
+if sudo systemctl is-active "$MYSERVICE".service > /dev/null 2>&1 ; then
+ ok "$MYSERVICE.service Is Running"
 else
- erro "Something wrong with bcnad.service/cosmovisor.service"
+ erro "Run: sudo systemctl start $MYSERVICE.service"
 fi
 }
 
