@@ -11,7 +11,7 @@
 ########
 # EDIT #
 MONIKER="" ## Set Your Moniker## 
-WALLETNAME="$MONIKER" ## Set Your Name Wallet
+WALLETNAME="${MONIKER}WALLET" ## Set Your Name Wallet
 CHAINID="bitcanna-testnet-5"  ## Set correct testnet
 ########
 
