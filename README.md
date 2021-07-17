@@ -12,6 +12,8 @@ Bitcanna Cosmos Lazy Tool includes:
   - CosmoCanna-IBC.sh       - A Lazy tool to do IBC transfers ubcna-utick
 
 
+
+Always check MONIKER AND WALLET NAME VARIABLES
 # Run as normal User (NOT ROOT):
     git clone https://github.com/hellresistor/CosmoCanna.git
     chmod -R +x CosmoCanna && cd CosmoCanna
