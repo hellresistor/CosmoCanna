@@ -10,13 +10,13 @@
 . CONFIG
 
 function checkservicestatus(){
-info "Check $BCNAD.service Running"
-if sudo systemctl is-active "$BCNAD".service > /dev/null 2>&1 ; then
- ok "$BCNAD Is Running"
-elif ! sudo systemctl is-active "$BCNAD".service > /dev/null 2>&1 ; then
- erro "$BCNAD is Stopped. Run bcnad"
+info "Check bcnad.service/cosmovisor.service Running"
+if sudo systemctl is-active bcnad.service > /dev/null 2>&1 || sudo systemctl is-active cosmovisor.service > /dev/null 2>&1 ; then
+ ok "bcnad Is Running"
+elif ! sudo systemctl is-active bcnad.service > /dev/null 2>&1 || sudo systemctl is-active cosmovisor.service > /dev/null 2>&1 ; then
+ erro "bcnad is Stopped. Run: sudo systemctl start bcnad.service/cosmovisor.service"
 else
- erro "Something wrong with $BCNAD.service"
+ erro "Something wrong with bcnad.service/cosmovisor.service"
 fi
 }
 
