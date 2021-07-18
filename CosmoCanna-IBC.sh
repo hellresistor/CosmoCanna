@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck disable=SC1091,SC2154
+# shellcheck disable=SC1091,SC2154 source=~/.CONFIG
 #---------------------------------------------#
 #             IBC Transfer Tool               #
 #---------------------------------------------#
