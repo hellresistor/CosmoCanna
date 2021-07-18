@@ -11,8 +11,8 @@
 
 function getwalletinfo(){
 MYMoniker=$(curl -s http://localhost:26657/status | grep -Po '"moniker": "\K.*?(?=")')
-BCNACHAINID="bitcanna-testnet-5"
-GASFEE="--gas auto --gas-adjustment 1.5 --gas-prices 0.01ubcna"
+BCNACHAINID=("bitcanna-testnet-5")
+GASFEE=("--gas auto --gas-adjustment 1.5 --gas-prices 0.01ubcna")
 MYWALLETNAME="${MYMoniker}WALLET"
 MYVALIDADDRESS=$(bcnad query staking validators --output json | jq | grep -B10 "$MYMoniker" | head -n1 | grep -Po '"operator_address": "\K.*?(?=")')
 if MYDELEGADDRESS=$(bcnad keys show "$MYWALLETNAME" -a) ; then
@@ -142,10 +142,10 @@ ${redy}Q- Quit${endy}
 Select:${endy}"
 read -r choicy
 case $choicy in
- 1) bcnad tx distribution withdraw-all-rewards --from "$MYMoniker" ${GASFEE} --memo "Withdraw All rewards by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
+ 1) bcnad tx distribution withdraw-all-rewards --from $MYMoniker ${GASFEE} --memo "Withdraw All rewards by CosmoCanna-Lazy tool" --chain-id ${BCNACHAINID} ;;
  2) setdestoaddress
     setamount
-    bcnad tx staking delegate "$THEDOADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" ${GASFEE} --memo "Delegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
+    bcnad tx staking delegate ${THEDOADDRESS} ${THEAMOUNT}ubcna --from ${MYMoniker} ${GASFEE} --memo "Delegate by CosmoCanna-Lazy tool" --chain-id ${BCNACHAINID} ;;
  3) setsourceoaddress
     setdestoaddress
     setamount
