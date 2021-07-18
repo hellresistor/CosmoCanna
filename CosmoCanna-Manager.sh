@@ -16,15 +16,15 @@ GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
 MYWALLETNAME="${MYMoniker}WALLET"
 MYVALIDADDRESS=$(bcnad query staking validators --output json | jq | grep -B10 "$MYMoniker" | head -n1 | grep -Po '"operator_address": "\K.*?(?=")')
 if MYDELEGADDRESS=$(bcnad keys show "$MYWALLETNAME" -a) ; then
+ MYADDRESS="$MYDELEGADDRESS"
+ export MYADDRESS
  ok "Nice!"
 else
  erro "Check MYWALLETNAME variable and put your walletname"
 fi
-MYADDRESS=$MYDELEGADDRESS
 MYAvaliableBal=$(bcnad query bank balances "$MYDELEGADDRESS" --output json | jq | grep -Po '"amount": "\K.*?(?=")' | tail -1)
 MYCommiBalance=$(bcnad query distribution commission "$MYVALIDADDRESS" --output json | jq  | grep -Po '"amount": "\K.*?(?=")')
 MyRewardBalance=$(bcnad query distribution rewards "$MYDELEGADDRESS" --output json --chain-id "$BCNACHAINID" | jq | grep -A4 "total" |  grep -Po '"amount": "\K.*?(?=")')
-export MYMoniker
 }
 
 function checkservicestatus(){
@@ -142,30 +142,30 @@ ${redy}Q- Quit${endy}
 Select:${endy}"
 read -r choicy
 case $choicy in
- 1) bcnad tx distribution withdraw-all-rewards --from "$MYMoniker" "$GASFEE" --memo "Withdraw All rewards by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
+ 1) bcnad tx distribution withdraw-all-rewards --from \""$MYMoniker"\" $GASFEE --memo "Withdraw All rewards by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
  2) setdestoaddress
     setamount
-    bcnad tx staking delegate "$THEDOADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" "$GASFEE" --memo "Delegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
+    bcnad tx staking delegate "$THEDOADDRESS" "$THEAMOUNT"ubcna --from \""$MYMoniker"\" $GASFEE --memo "Delegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
  3) setsourceoaddress
     setdestoaddress
     setamount
-    bcnad tx staking redelegate "$THESOADDRESS" "$THEDOADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" "$GASFEE" --memo "Redelegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
+    bcnad tx staking redelegate "$THESOADDRESS" "$THEDOADDRESS" "$THEAMOUNT"ubcna --from \""$MYMoniker"\" $GASFEE --memo "Redelegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
  4) setsourcewaddress
     setdestwaddress
     setamount
-    bcnad tx bank send "$THESWADDRESS" "$THEDWADDRESS" "$THEAMOUNT"ubcna -y "$GASFEE" --memo "Send Bcna by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
+    bcnad tx bank send "$THESWADDRESS" "$THEDWADDRESS" "$THEAMOUNT"ubcna -y $GASFEE --memo "Send Bcna by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
  5) info "Set your Website"
     read -r MYWEBSITE
     info "Set your PGP Keybase key"
     read -r MYPGPKEY
     info "Set Some Details"
     read -r MYDETAILS
-    bcnad tx staking edit-validator --moniker \""$MYMoniker"\" --website \""$MYWEBSITE"\" --identity \""$MYPGPKEY"\" --details \""$MYDETAILS"\" --from \""$MYWALLETNAME"\" --memo "Edit Validator by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" "$GASFEE"
+    bcnad tx staking edit-validator --moniker \""$MYMoniker"\" --website \""$MYWEBSITE"\" --identity \""$MYPGPKEY"\" --details \""$MYDETAILS"\" --from \""$MYWALLETNAME"\" $GASFEE --memo "Edit Validator by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID"
     ;;
  6) setdestwaddress
     setamount
-    bcnad tx staking unbond "$THEDWADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" "$GASFEE" --memo "Unbond by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
- 7) bcnad tx slashing unjail --from "$MYMoniker" "$GASFEE" --memo "Unjailing by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
+    bcnad tx staking unbond "$THEDWADDRESS" "$THEAMOUNT"ubcna --from \""$MYMoniker"\" $GASFEE --memo "Unbond by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
+ 7) bcnad tx slashing unjail --from \""$MYMoniker"\" $GASFEE --memo "Unjailing by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
  q|Q) ok "Bye Bye Roll One joint for me ;)" && exit 0 ;;
  *) warn "MISSING KEY" && sleep 0.5;;
 esac
