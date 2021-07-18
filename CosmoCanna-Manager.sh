@@ -113,11 +113,12 @@ sleep 2
 while true
 do
 getwalletinfo
-echo -e "
+echo -e "${bluey}===========================================================================================
+================================================================================${endy}
                    ${greeny}Bitcanna Manager${endy}
-${bluey}-------------------------------------------------------------------------------------------${endy}
+${bluey}------------------------------------------------------------------------------------------------------${endy}
 Address: ${greeny}$BCNA_ADDR${endy}
-${bluey}-------------------------------------------------------------------------------------------${endy}
+${bluey}----------------------------------------------------------------***********---------------------------${endy}
 My Moniker:${endy} ${greeny}$MYMoniker${endy}
 My Validator Address:${endy} ${greeny}$MYVALIDADDRESS${endy}
 My Wallet Address:${endy} ${greeny}$MYDELEGADDRESS${endy}
@@ -126,7 +127,7 @@ Avaliable Bal.:${endy} ${greeny}$MYAvaliableBal ubcna${endy}
 Rewards Bal.:${endy} ${greeny}$MyRewardBalance ubcna${endy}
 Comission Bal.:${endy} ${greeny}$MYCommiBalance ubcna${endy}
 ${bluey}===========================================================================================
-===========================================================================================${endy}
+================================================================================${endy}
 ${yellowy}Menu${endy}
 ${bluey}1-${endy} Withdraw All Rewards
 ${bluey}2-${endy} Delegate
