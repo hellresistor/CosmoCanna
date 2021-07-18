@@ -3,7 +3,7 @@
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
-#            Version: V2.41                 #
+#            Version: V2.43                 #
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
@@ -11,17 +11,16 @@
 . CONFIG
 
 function getwalletinfo(){
-info "Put Wallet Password"
-if MYMoniker=$(curl -s http://localhost:26657/status > /dev/null 2>&1 | grep -Po '"moniker": "\K.*?(?=")') ; then
- ok "Nice!"
-else
- erro "Check MYWALLETNAME variable and put your walletname"
-fi
+MYMoniker=$(curl -s http://localhost:26657/status > /dev/null 2>&1 | grep -Po '"moniker": "\K.*?(?=")')
 BCNACHAINID="bitcanna-testnet-5"
 GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
 MYWALLETNAME="${MYMoniker}WALLET"
 MYVALIDADDRESS=$(bcnad query staking validators --output json | jq | grep -B10 "$MYMoniker" | head -n1 | grep -Po '"operator_address": "\K.*?(?=")')
-MYDELEGADDRESS=$(bcnad keys show "$MYWALLETNAME" -a)
+if MYDELEGADDRESS=$(bcnad keys show "$MYWALLETNAME" -a) ; then
+ ok "Nice!"
+else
+ erro "Check MYWALLETNAME variable and put your walletname"
+fi
 MYADDRESS=$MYDELEGADDRESS
 MYAvaliableBal=$(bcnad query bank balances "$MYDELEGADDRESS" --output json | jq | grep -Po '"amount": "\K.*?(?=")')
 MYCommiBalance=$(bcnad query distribution commission "$MYVALIDADDRESS" --output json | jq  | grep -Po '"amount": "\K.*?(?=")')
@@ -119,7 +118,7 @@ echo -e "
 ${bluey}-------------------------------------------------------------------------------------------${endy}
 Address: ${greeny}$BCNA_ADDR${endy}
 ${bluey}-------------------------------------------------------------------------------------------${endy}
-My Moniker:${endy} ${greeny}$MYMoniker{endy}
+My Moniker:${endy} ${greeny}$MYMoniker${endy}
 My Validator Address:${endy} ${greeny}$MYVALIDADDRESS${endy}
 My Wallet Address:${endy} ${greeny}$MYDELEGADDRESS${endy}
 BCNA Balance:${endy} ${greeny}$MYAvaliableBal ubcna${endy}
