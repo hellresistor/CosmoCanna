@@ -3,7 +3,7 @@
 #---------------------------------------------#
 #             IBC Transfer Tool               #
 #---------------------------------------------#
-#              Version: V1.04                 #
+#              Version: V1.30                 #
 #          Donate BitCanna Address:           #
 # bcna14dz7zytpenkyyktqvzq2mw7msfyp0y3zg48xqw #
 #---------------------------------------------#
@@ -39,7 +39,7 @@ BCNA_RPC="http://seed2.bitcanna.io:16657"
 BCNA_chain="bitcanna-testnet-5"
 BCNA_channel="channel-0"
 BCNA_port="transfer"
-GASFLAG="--gas auto --gas-prices 0.09ubcna --gas-adjustment 1.5  --packet-timeout-timestamp 6000000000000"
+GASFLAG="--gas auto --gas-adjustment 1.5 --gas-prices 0.01ubcna"
 export BCNA_ADDR
 export BCNA_RPC
 export BCNA_chain
@@ -157,19 +157,19 @@ read -r choicy
 case $choicy in
  1) setdestMTaddress
     setamount
-    bcnad tx ibc-transfer transfer "$BCNA_port" "$BCNA_channel" "$THETMTADDRESS" "$THEAMOUNT""$BCNADENOM" --chain-id "$BCNA_chain" --from "$BITCANNAWALLETNAME" -y "$GASFLAG"
+    bcnad tx ibc-transfer transfer "$BCNA_port" "$BCNA_channel" "$THETMTADDRESS" "$THEAMOUNT""$BCNADENOM" --chain-id "$BCNA_chain" --from "$BITCANNAWALLETNAME" -y "$GASFLAG" --packet-timeout-timestamp 6000000000000
     ;;
  2) setdestBCNAaddress
     setamount
-    mtm tx ibc-transfer transfer "$MT_port" "$MT_channel" "$THETBCNAADDRESS" "$THEAMOUNT""$MTMIBCDENOM" --chain-id "$MT_chain" --from "$MICROTICKWALLETNAME" -y "$GASFLAG" --node "$MT_RPC"
+    mtm tx ibc-transfer transfer "$MT_port" "$MT_channel" "$THETBCNAADDRESS" "$THEAMOUNT""$MTMIBCDENOM" --chain-id "$MT_chain" --from "$MICROTICKWALLETNAME" -y "$GASFLAG" --node "$MT_RPC" --packet-timeout-timestamp 6000000000000
     ;;
  3) setdestBCNAaddress
     setamount
-    mtm tx ibc-transfer transfer "$MT_port" "$MT_channel" "$THETBCNAADDRESS" "$THEAMOUNT""$MTMDENOM" --chain-id "$MT_chain" --from "$MICROTICKWALLETNAME" -y "$GASFLAG" --node "$MT_RPC"
+    mtm tx ibc-transfer transfer "$MT_port" "$MT_channel" "$THETBCNAADDRESS" "$THEAMOUNT""$MTMDENOM" --chain-id "$MT_chain" --from "$MICROTICKWALLETNAME" -y "$GASFLAG" --node "$MT_RPC" --packet-timeout-timestamp 6000000000000
     ;;
  4) setdestMTaddress
     setamount
-    bcnad tx ibc-transfer transfer "$BCNA_port" "$BCNA_channel" "$THETMTADDRESS" "$THEAMOUNT""$BCNAIBCDENOM" --chain-id "$BCNA_chain" --from "$BITCANNAWALLETNAME" -y "$GASFLAG"
+    bcnad tx ibc-transfer transfer "$BCNA_port" "$BCNA_channel" "$THETMTADDRESS" "$THEAMOUNT""$BCNAIBCDENOM" --chain-id "$BCNA_chain" --from "$BITCANNAWALLETNAME" -y "$GASFLAG"  --packet-timeout-timestamp 6000000000000
     ;;
 q|Q) ok "Bye Bye Roll One joint for me ;)" && exit 0 ;;
  *) warn "MISSING KEY" && sleep 0.5 ;;
