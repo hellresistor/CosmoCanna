@@ -2,7 +2,7 @@
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
-#            Version: V2.43                 #
+#            Version: V2.51                 #
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
@@ -21,7 +21,7 @@ else
  erro "Check MYWALLETNAME variable and put your walletname"
 fi
 MYADDRESS=$MYDELEGADDRESS
-MYAvaliableBal=$(bcnad query bank balances "$MYDELEGADDRESS" --output json | jq | grep -Po '"amount": "\K.*?(?=")')
+MYAvaliableBal=$(bcnad query bank balances "$MYDELEGADDRESS" --output json | jq | grep -Po '"amount": "\K.*?(?=")' | tail -1)
 MYCommiBalance=$(bcnad query distribution commission "$MYVALIDADDRESS" --output json | jq  | grep -Po '"amount": "\K.*?(?=")')
 MyRewardBalance=$(bcnad query distribution rewards "$MYDELEGADDRESS" --output json --chain-id "$BCNACHAINID" | jq | grep -A4 "total" |  grep -Po '"amount": "\K.*?(?=")')
 export MYMoniker
@@ -108,16 +108,16 @@ done
 
 function menu(){
 ok "Welcome To CosmoCanna Lazy-Tool by hellresistor"
-sleep 2
+sleep 0.5
 while true
 do
 getwalletinfo
-echo -e "${bluey}===========================================================================================
-================================================================================${endy}
-                   ${greeny}Bitcanna Manager${endy}
-${bluey}------------------------------------------------------------------------------------------------------${endy}
-Address: ${greeny}$BCNA_ADDR${endy}
-${bluey}----------------------------------------------------------------***********---------------------------${endy}
+echo -e "${bluey}===========================================================================================${endy}
+
+                                    ${greeny}Bitcanna Manager${endy}
+
+${bluey}===========================================================================================${endy}
+
 My Moniker:${endy} ${greeny}$MYMoniker${endy}
 My Validator Address:${endy} ${greeny}$MYVALIDADDRESS${endy}
 My Wallet Address:${endy} ${greeny}$MYDELEGADDRESS${endy}
@@ -125,8 +125,9 @@ BCNA Balance:${endy} ${greeny}$MYAvaliableBal ubcna${endy}
 Avaliable Bal.:${endy} ${greeny}$MYAvaliableBal ubcna${endy}
 Rewards Bal.:${endy} ${greeny}$MyRewardBalance ubcna${endy}
 Comission Bal.:${endy} ${greeny}$MYCommiBalance ubcna${endy}
-${bluey}===========================================================================================
-================================================================================${endy}
+
+${bluey}===========================================================================================${endy}
+
 ${yellowy}Menu${endy}
 ${bluey}1-${endy} Withdraw All Rewards
 ${bluey}2-${endy} Delegate
@@ -135,7 +136,9 @@ ${bluey}4-${endy} Send Coins
 ${bluey}5-${endy} Edit Validator
 ${bluey}6-${endy} Unbond
 ${bluey}7-${endy} Unjail Validator
+
 ${redy}Q- Quit${endy}
+
 Select:${endy}"
 read -r choicy
 case $choicy in
