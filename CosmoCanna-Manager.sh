@@ -3,7 +3,7 @@
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
-#            Version: V2.40                 #
+#            Version: V2.41                 #
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
@@ -11,10 +11,11 @@
 . CONFIG
 
 function getwalletinfo(){
-MYMoniker=$(curl http://localhost:26657/status > /dev/null 2>&1 | grep -Po '"moniker": "\K.*?(?=")')
+info "Put Wallet Password"
+MYMoniker=$(curl -s http://localhost:26657/status > /dev/null 2>&1 | grep -Po '"moniker": "\K.*?(?=")')
 BCNACHAINID="bitcanna-testnet-5"
 GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
-MYWALLETNAME="${MONIKER}WALLET"
+MYWALLETNAME="${MYMoniker}WALLET"
 MYVALIDADDRESS=$(bcnad query staking validators --output json | jq | grep -B10 "$MYMoniker" | head -n1 | grep -Po '"operator_address": "\K.*?(?=")')
 MYDELEGADDRESS=$(bcnad keys show "$MYWALLETNAME" -a)
 MYADDRESS=$MYDELEGADDRESS
@@ -25,10 +26,10 @@ export MYMoniker
 }
 
 function checkservicestatus(){
-if systemctl --all --type service | grep -q bcnad ; then
- MYSERVICE="bcnad"
-elif systemctl --all --type service | grep -q cosmovisor ; then
+if systemctl --all --type service | grep -q cosmovisor ; then
  MYSERVICE="cosmovisor"
+elif systemctl --all --type service | grep -q bcnad ; then
+ MYSERVICE="bcnad"
 fi
 info "Check $MYSERVICE.service Running"
 if sudo systemctl is-active "$MYSERVICE".service > /dev/null 2>&1 ; then
@@ -109,27 +110,30 @@ sleep 2
 while true
 do
 getwalletinfo
-info "
-My Moniker: $MYMoniker
-My Validator Address: $MYVALIDADDRESS
-------------------------------------------------------------------------------
-My Wallet Address: $MYDELEGADDRESS
-Avaliable Bal.: $MYAvaliableBal ubcna
-Rewards Bal.: $MyRewardBalance ubcna
-Comission Bal.: $MYCommiBalance ubcna
-------------------------------------------------------------------------------
-Menu:
-1- Withdraw All Rewards
-2- Delegate
-3- Redelegate
-4- Send Coins
-5- Edit Validator
-6- Unbond
-7- Unjail Validator
-
-Q- Bye Bye
- 
-Choice:"
+echo -e "
+                   ${greeny}Bitcanna Manager${endy}
+${bluey}-------------------------------------------------------------------------------------------${endy}
+Address: ${greeny}$BCNA_ADDR${endy}
+${bluey}-------------------------------------------------------------------------------------------${endy}
+My Moniker:${endy} ${greeny}$MYMoniker{endy}
+My Validator Address:${endy} ${greeny}$MYVALIDADDRESS${endy}
+My Wallet Address:${endy} ${greeny}$MYDELEGADDRESS${endy}
+BCNA Balance:${endy} ${greeny}$MYAvaliableBal ubcna${endy}
+Avaliable Bal.:${endy} ${greeny}$MYAvaliableBal ubcna${endy}
+Rewards Bal.:${endy} ${greeny}$MyRewardBalance ubcna${endy}
+Comission Bal.:${endy} ${greeny}$MYCommiBalance ubcna${endy}
+${bluey}===========================================================================================
+===========================================================================================${endy}
+${yellowy}Menu${endy}
+${bluey}1-${endy} Withdraw All Rewards
+${bluey}2-${endy} Delegate
+${bluey}3-${endy} Redelegate
+${bluey}4-${endy} Send Coins
+${bluey}5-${endy} Edit Validator
+${bluey}6-${endy} Unbond
+${bluey}7-${endy} Unjail Validator
+${redy}Q- Quit${endy}
+Select:${endy}"
 read -r choicy
 case $choicy in
  1) bcnad tx distribution withdraw-all-rewards --from "$MYMoniker" "$GASFEE" --memo "Withdraw All rewards by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" ;;
