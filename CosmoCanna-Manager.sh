@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck disable=SC1091
+# shellcheck disable=SC1091,SC2154
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
