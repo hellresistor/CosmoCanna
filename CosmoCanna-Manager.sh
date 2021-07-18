@@ -12,7 +12,11 @@
 
 function getwalletinfo(){
 info "Put Wallet Password"
-MYMoniker=$(curl -s http://localhost:26657/status > /dev/null 2>&1 | grep -Po '"moniker": "\K.*?(?=")')
+if MYMoniker=$(curl -s http://localhost:26657/status > /dev/null 2>&1 | grep -Po '"moniker": "\K.*?(?=")') ; then
+ ok "Nice!"
+else
+ erro "Check MYWALLETNAME variable and put your walletname"
+fi
 BCNACHAINID="bitcanna-testnet-5"
 GASFEE="--gas-adjustment 1.5 --gas auto --gas-prices 0.01ubcna"
 MYWALLETNAME="${MYMoniker}WALLET"
