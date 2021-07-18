@@ -1,5 +1,4 @@
 #!/bin/bash
-# shellcheck disable=SC1091
 #---------------------------------------------------#
 #  A BitCanna-Cosmos Community Installation Script  #
 #                  REQUIREMENTS                     #   
