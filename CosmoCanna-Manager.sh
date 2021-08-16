@@ -148,7 +148,7 @@ ${redy}Q- Quit${endy}
 Select:${endy}"
 read -r choicy
 case $choicy in
- 1) bcnad tx distribution withdraw-all-rewards --from "$MYMoniker" --chain-id "$BCNACHAINID" --memo "Withdraw All rewards by CosmoCannaLazy tool" ${GASFEE} ;;
+ 1) bcnad tx distribution withdraw-all-rewards --from "$MYMoniker" --chain-id "$BCNACHAINID" --memo "Withdraw All rewards by CosmoCannaLazy tool" "${GASFEE}" ;;
  2) setdestoaddress
     setamount
     echo -e "${KEYPWD}" | bcnad tx staking delegate "$THEDOADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" "${GASFEE}" --memo "Delegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
@@ -166,12 +166,12 @@ case $choicy in
     read -r MYPGPKEY
     info "Set Some Details"
     read -r MYDETAILS
-    echo -e "${KEYPWD}" | bcnad tx staking edit-validator --moniker "$MYMoniker" --website \"$MYWEBSITE\" --identity "$MYPGPKEY" --details \"$MYDETAILS\" --from \"$MYWALLETNAME\" "${GASFEE}" --memo "Edit Validator by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y
+    echo -e "${KEYPWD}" | bcnad tx staking edit-validator --moniker "$MYMoniker" --website "\"$MYWEBSITE\"" --identity "$MYPGPKEY" --details "\"$MYDETAILS\"" --from "\"$MYWALLETNAME\"" "${GASFEE}" --memo "Edit Validator by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y
     ;;
  6) setdestwaddress
     setamount
-    echo -e "${KEYPWD}" | bcnad tx staking unbond "$THEDWADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" ${GASFEE} --memo "Unbond by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
- 7) echo -e "${KEYPWD}" | bcnad tx slashing unjail --from "$MYMoniker" ${GASFEE} --memo "Unjailing by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
+    echo -e "${KEYPWD}" | bcnad tx staking unbond "$THEDWADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" "${GASFEE}" --memo "Unbond by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
+ 7) echo -e "${KEYPWD}" | bcnad tx slashing unjail --from "$MYMoniker" "${GASFEE}" --memo "Unjailing by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
  q|Q) ok "Bye Bye Roll One joint for me ;)" && exit 0 ;;
  *) warn "MISSING KEY" && sleep 0.5;;
 esac
