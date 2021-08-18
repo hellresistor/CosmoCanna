@@ -148,7 +148,11 @@ ${redy}Q- Quit${endy}
 Select:${endy}"
 read -r choicy
 case $choicy in
+<<<<<<< HEAD
  1) bcnad tx distribution withdraw-all-rewards --from ${MYMoniker} --chain-id ${BCNACHAINID} --memo "Withdraw All rewards by CosmoCannaLazy tool" ${GASFEE} ;;
+=======
+ 1) bcnad tx distribution withdraw-all-rewards --from "$MYMoniker" --chain-id "$BCNACHAINID" --memo "Withdraw All rewards by CosmoCannaLazy tool" ${GASFEE} ;;
+>>>>>>> parent of 6721401 (Update CosmoCanna-Manager.sh)
  2) setdestoaddress
     setamount
     echo -e "${KEYPWD}" | bcnad tx staking delegate "$THEDOADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" ${GASFEE} --memo "Delegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
@@ -166,7 +170,11 @@ case $choicy in
     read -r MYPGPKEY
     info "Set Some Details"
     read -r MYDETAILS
+<<<<<<< HEAD
     echo -e "${KEYPWD}" | bcnad tx staking edit-validator --moniker "$MYMoniker" --website \"$MYWEBSITE\" --identity "$MYPGPKEY" --details \"$MYDETAILS\" --from \"$MYWALLETNAME\" ${GASFEE} --memo "Edit Validator by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y
+=======
+    echo -e "${KEYPWD}" | bcnad tx staking edit-validator --moniker "$MYMoniker" --website \"$MYWEBSITE\" --identity "$MYPGPKEY" --details \"$MYDETAILS\" --from \"$MYWALLETNAME\" "${GASFEE}" --memo "Edit Validator by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y
+>>>>>>> parent of 6721401 (Update CosmoCanna-Manager.sh)
     ;;
  6) setdestwaddress
     setamount
