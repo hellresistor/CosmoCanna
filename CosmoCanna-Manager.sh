@@ -2,7 +2,7 @@
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
-#            Version: V3.00                 #
+#            Version: V3.01                 #
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
@@ -16,13 +16,13 @@ GASFEE="--gas auto --gas-adjustment 1.5 --gas-prices 0.01ubcna"
 MYWALLETNAME="${MYMoniker}"
 MYVALIDADDRESS=$(bcnad query staking validators --output json | jq | grep -B10 "$MYMoniker" | head -n1 | grep -Po '"operator_address": "\K.*?(?=")')
 
-if [ -z "$KEYPWD" ] ; then
+if [ -z "$KEYPASSWD" ] ; then
  info "Put keyring wallet password:"
- read -r -s -p KEYPWD
- export KEYPWD
+ read -r -s KEYPASSWD
+ export KEYPASSWD
 fi
 
-if MYDELEGADDRESS=$(echo -e "${KEYPWD}" | bcnad keys show "$MYWALLETNAME" -a) ; then
+if MYDELEGADDRESS=$(echo -e "${KEYPASSWD}" | bcnad keys show "$MYWALLETNAME" -a) ; then
  MYADDRESS="$MYDELEGADDRESS"
  export MYADDRESS
 else
