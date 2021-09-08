@@ -1,5 +1,5 @@
-##!/bin/bash
-# shellcheck disable=SC1091,SC2034
+#!/bin/bash
+# shellcheck disable=SC1091,SC2034,SC1090
 #---------------------------------------------------#
 #  A BitCanna-Cosmos Community Installation Script  #
 #               bcnad + cosmovisor                  #   
@@ -521,7 +521,7 @@ echo "export DAEMON_NAME=bcnad
 export DAEMON_RESTART_AFTER_UPGRADE=true
 export DAEMON_HOME=${HOME}/.bcna
 PATH=\"$BCNADIR/cosmovisor/current/bin:$PATH\"" | tee -a "${HOME}"/.profile
-. "${HOME}"/.profile
+. "$HOME"/.profile
 info "Commands:"
 echo "Show cosmovisor Version: $COSMOV version
 Show BCNA Version: $BCNAD version
