@@ -2,7 +2,7 @@
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
-#            Version: V3.03                 #
+#            Version: V3.11                 #
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
@@ -15,7 +15,7 @@ MYMoniker=$(curl -s http://localhost:26657/status | grep -Po '"moniker": "\K.*?(
 ### Put here your Wallet NAME
 MYWALLETNAME="${MYMoniker}-Wallet"
 
-BCNACHAINID="bitcanna-testnet-6"
+BCNACHAINID="bitcanna-testnet-7"
 GASFEE="--gas auto --gas-adjustment 1.5 --gas-prices 0.01ubcna"
 MYVALIDADDRESS=$(bcnad query staking validators --output json | jq | grep -B10 "$MYMoniker" | head -n1 | grep -Po '"operator_address": "\K.*?(?=")')
 if [ -z "$KEYPASSWD" ] ; then
@@ -149,30 +149,30 @@ ${redy}Q- Quit${endy}
 Select:${endy}"
 read -r choicy
 case $choicy in
- 1) becho -e "${KEYPASSWD}" | bcnad tx distribution withdraw-all-rewards --from "$MYMoniker" --chain-id "$BCNACHAINID" --memo "Withdraw All rewards by CosmoCannaLazy tool" ${GASFEE} ;;
+ 1) echo -e "${KEYPASSWD}" | bcnad tx distribution withdraw-all-rewards --from $MYMoniker --chain-id $BCNACHAINID --memo "Withdraw All rewards by CosmoCannaLazy tool" ${GASFEE} ;;
  2) setdestoaddress
     setamount
-    echo -e "${KEYPASSWD}" | bcnad tx staking delegate "$THEDOADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" ${GASFEE} --memo "Delegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
+    echo -e "${KEYPASSWD}" | bcnad tx staking delegate $THEDOADDRESS "$THEAMOUNT"ubcna --from $MYMoniker ${GASFEE} --memo "Delegate by CosmoCanna-Lazy tool" --chain-id $BCNACHAINID -y ;;
  3) setsourceoaddress
     setdestoaddress
     setamount
-    echo -e "${KEYPASSWD}" | bcnad tx staking redelegate "$THESOADDRESS" "$THEDOADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" ${GASFEE} --memo "Redelegate by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
+    echo -e "${KEYPASSWD}" | bcnad tx staking redelegate "$THESOADDRESS" "$THEDOADDRESS" "$THEAMOUNT"ubcna --from $MYMoniker ${GASFEE} --memo "Redelegate by CosmoCanna-Lazy tool" --chain-id $BCNACHAINID -y ;;
  4) setsourcewaddress
     setdestwaddress
     setamount
-    echo -e "${KEYPASSWD}" | bcnad tx bank send "$THESWADDRESS" "$THEDWADDRESS" "$THEAMOUNT"ubcna ${GASFEE} --memo "Send Bcna by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
+    echo -e "${KEYPASSWD}" | bcnad tx bank send "$THESWADDRESS" "$THEDWADDRESS" "$THEAMOUNT"ubcna ${GASFEE} --memo "Send Bcna by CosmoCanna-Lazy tool" --chain-id $BCNACHAINID -y ;;
  5) info "Set your Website"
     read -r MYWEBSITE
     info "Set your PGP Keybase key"
     read -r MYPGPKEY
     info "Set Some Details"
     read -r MYDETAILS
-    echo -e "${KEYPASSWD}" | bcnad tx staking edit-validator --moniker "$MYMoniker" --website "\"$MYWEBSITE\"" --identity "$MYPGPKEY" --details "\"$MYDETAILS\"" --from "\"$MYWALLETNAME\"" "${GASFEE}" --memo "Edit Validator by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y
+    echo -e "${KEYPASSWD}" | bcnad tx staking edit-validator --moniker $MYMoniker --website "\"$MYWEBSITE\"" --identity "$MYPGPKEY" --details "\"$MYDETAILS\"" --from $MYWALLETNAME ${GASFEE} --memo "Edit Validator by CosmoCanna-Lazy tool" --chain-id $BCNACHAINID -y
     ;;
  6) setdestwaddress
     setamount
-    echo -e "${KEYPASSWD}" | bcnad tx staking unbond "$THEDWADDRESS" "$THEAMOUNT"ubcna --from "$MYMoniker" ${GASFEE} --memo "Unbond by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
- 7) echo -e "${KEYPASSWD}" | bcnad tx slashing unjail --from "$MYMoniker" ${GASFEE} --memo "Unjailing by CosmoCanna-Lazy tool" --chain-id "$BCNACHAINID" -y ;;
+    echo -e "${KEYPASSWD}" | bcnad tx staking unbond "$THEDWADDRESS" "$THEAMOUNT"ubcna --from $MYMoniker ${GASFEE} --memo "Unbond by CosmoCanna-Lazy tool" --chain-id $BCNACHAINID -y ;;
+ 7) echo -e "${KEYPASSWD}" | bcnad tx slashing unjail --from $MYMoniker ${GASFEE} --memo "Unjailing by CosmoCanna-Lazy tool" --chain-id $BCNACHAINID -y ;;
  q|Q) ok "Bye Bye Roll One joint for me ;)" && exit 0 ;;
  *) warn "MISSING KEY" && sleep 0.5;;
 esac
