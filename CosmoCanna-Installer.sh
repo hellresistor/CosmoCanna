@@ -2,10 +2,10 @@
 # shellcheck disable=SC1091,SC2034,SC1090
 #---------------------------------------------------#
 #  A BitCanna-Cosmos Community Installation Script  #
-#               bcnad + cosmovisor                  #   
+#               bcnad + cosmovisor                  #
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V6.09                   #
+#                  Version: V6.12                   #
 #             Donate BitCanna Address:              #
 #    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
 #---------------------------------------------------#
@@ -13,7 +13,7 @@
 ########
 # EDIT #
 MONIKER="" ## Set Your Moniker## 
-WALLETNAME="${MONIKER}Wallet" ## Set Your Name Wallet
+WALLETNAME="${MONIKER}-Wallet" ## Set Your Name Wallet
 CHAINID="bitcanna-testnet-7"  ## Set correct chain
 BCNACOSMOSREP="bcna"
 GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/testnet-bcna-cosmos/main/instructions/pre-swap/genesis.json"
@@ -27,7 +27,7 @@ COSMOVISORLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCN
 COSMOVISORLINKSHA=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep "binary sha256sum:" | cut -d\` -f8)
 VERSIONNEW=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep "tag_name" | cut -d\" -f4 | head -1)
 VERSIONOLD=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases" | grep "tag_name" | cut -d\" -f4 | head -2 | tail -1)
-SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,23671067d0fd40aec523290585c7d8e91034a771@seed2.bitcanna.io:16656"
+SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,23671067d0fd40aec523290585c7d8e91034a771@seed2.bitcanna.io:26656"
 BCNAUSERHOME="$HOME"
 BCNADIR="$BCNAUSERHOME/.bcna"
 BCNACONF="$BCNADIR/config"
@@ -35,7 +35,7 @@ BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 COSMOV="cosmovisor"
 BCNAPORT="26656"
-SCRPTVER="V6.09"
+SCRPTVER="V6.12"
 DONATE="B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv"
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
@@ -101,10 +101,11 @@ if [[ $(sha256sum /tmp/"$COSMOV") == "$COSMOVISORLINKSHA  /tmp/$COSMOV" ]]; then
 else
  erro "Checksum sha256sum  FAIL"
 fi
-if [[ $(/tmp/"$COSMOV" version) == "$VERSIONNEW" ]] ; then
- sudo cp -P /tmp/"$COSMOV" /usr/local/bin/"$COSMOV"
+
+if sudo cp -p /tmp/"$COSMOV" /usr/local/bin/"$COSMOV" > /dev/null 2>&1 && sudo chmod +x /usr/local/bin/"$COSMOV" > /dev/null 2>&1 ; then 
+ ok "Binaries in place /usr/local/bin/$COSMOV"
 else
- erro "Cannot copy cosmovisor to /usr/local/bin directory"
+ warn "Cannot set binary file $COSMOV on dir /usr/local/bin"
 fi
 }
 
@@ -149,6 +150,7 @@ if [ "$choix" == "i" ] || [ "$choix" == "I" ]; then
   esac 
   done
   prometheus
+  backupkeys
   while true
   do
   info "You like configure COSMOVISOR with BCNA? (Y/N)"
@@ -159,7 +161,6 @@ if [ "$choix" == "i" ] || [ "$choix" == "I" ]; then
    *) warn "Wrong key" ;;
   esac 
   done
-  backup
   cleaner
  else
   erro "Detected $BCNAD/$COSMOV wallet already installed.\n"
@@ -190,7 +191,8 @@ elif [ "$choix" == "r" ] || [ "$choix" == "R" ] ; then
   fi
   cp -f -r --preserve "$BCNADIR" "$BCNAUSERHOME"/REMOVEDBCNABACKUP/.bcna."${DATENOW}" > /dev/null 2>&1 || erro "Cannot Copy $BCNADIR"
   sudo rm -R "$BCNADIR" > /dev/null 2>&1 || warn "Cannot Delete $BCNADIR"
-  sudo ufw delete "$BCNAPORT" > /dev/null 2>&1 || warn "Remove rule from ufw for $BCNAPORT manually"
+  sudo ufw delete allow "$BCNAPORT" > /dev/null 2>&1 || warn "Remove rule from ufw for $BCNAPORT manually"
+  sudo ufw delete allow from 167.172.43.16 proto tcp to any port 26660 > /dev/null 2>&1 || warn "Remove rule from ufw for 167.172.43.16 26660 manually"
   ok "Bitcanna-Cosmos wallet was FULLY Removed"
  else
    erro "Bitcanna-Cosmos wallet not exist\n" && warn "Choose INSTALL"
@@ -222,16 +224,18 @@ done
 }
 
 function SettingConnection(){
+"$BCNAD" unsafe-reset-all || warn "Unable to Reset chain"
+"$BCNAD" config chain-id "$CHAINID" || erro "Unable to set chain-id $CHAINID"
 while true
 do
 info "Choose method to recover your wallet:\n\t S - by Seed\n\t C - Create New Wallet"
 read -r recwallet
 case "$recwallet" in
- s|S) info "Put your Wallet Name to Recovery :"
+ s|S) info "Put your Wallet/Address Name to Recovery :"
       read -r WALLETNAME
       "$BCNAD" keys add "$WALLETNAME" --recover
       break ;;
- c|C) info "Creating New Wallet"
+ c|C) info "Creating New Wallet/Address"
       WALLETPASS="dummy1"
       WALLETPASSS="dummy2"
       while [[ "$WALLETPASS" != "$WALLETPASSS" ]]
@@ -243,14 +247,9 @@ case "$recwallet" in
        done
        warn "Repeat PassPhrase: " && read -rsp "" WALLETPASSS
       done
-      if echo -e "${WALLETPASS}\\n${WALLETPASSS}" | "$BCNAD" keys add \""$WALLETNAME"\" |& tee -a "$BCNAUSERHOME"/BCNABACKUP/"$WALLETNAME".walletinfo; then 
+      if echo -e "${WALLETPASS}\\n${WALLETPASSS}" | "$BCNAD" keys add "$WALLETNAME" |& tee -a "$BCNAUSERHOME"/BCNABACKUP/"$WALLETNAME".walletinfo; then 
        ok "Wallet: $WALLETNAME created succefully"
-       if [[ -f "$BCNAUSERHOME"/BCNABACKUP/"$WALLETNAME".walletinfo ]] ; then
-        echo "Passphrase : $WALLETPASS" >> "$BCNAUSERHOME"/BCNABACKUP/"$WALLETNAME".walletinfo
-        MYWALLETADDR=$(sed -n -e 's/.*address: //p' "$BCNAUSERHOME"/BCNABACKUP/"$WALLETNAME".walletinfo)
-       else
-        erro "$BCNAUSERHOME/BCNABACKUP/$WALLETNAME.walletinfo NOT FOUND"
-       fi
+       MYWALLETADDR=$(echo $WALLETPASS | $BCNAD keys show $WALLETNAME --address)
       else 
        erro "Wallet: $WALLETNAME NOT created"
       fi 
@@ -306,7 +305,6 @@ else
 fi
 faztsyncconfig
 sed -E -i "s/minimum-gas-prices = \".*\"/minimum-gas-prices = \"0.01ubcna\"/" "$BCNACONF"/app.toml || erro "Cannot set minimum-gas on app.toml file"
-
 if sudo systemctl is-active ufw > /dev/null; then
  ok "ufw Active"
 else
@@ -384,23 +382,35 @@ NODE1_ID=$(curl -s "$RPC1:$RPC_PORT1/status" | jq -r .result.node_info.id)
 NODE2_ID=$(curl -s "$RPC2:$RPC_PORT2/status" | jq -r .result.node_info.id)
 PERSISTPEERS="${NODE1_ID}@${NODE1_IP}:${P2P_PORT1},${NODE2_ID}@${NODE2_IP}:${P2P_PORT2}"
 
-# sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-#s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"http://$NODE1_IP:$RPC_PORT1,http://$NODE2_IP:$RPC_PORT2\"| ; \
-#s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1\"$BLOCK_HEIGHT\"| ; \
-#s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
-#s|^(persistent_peers[[:space:]]+=[[:space:]]+).*$|\1\"${NODE1_ID}@${NODE1_IP}:${P2P_PORT1},${NODE2_ID}@${NODE2_IP}:${P2P_PORT2}\"| ; \
-#s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"$SEEDS\"|" "$BCNADIR"/config/config.toml
-sed -i.bak -E "s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"http://$NODE1_IP:$RPC_PORT1,http://$NODE2_IP:$RPC_PORT2\"| ; \
+while true
+do
+ info "Choose:\n\t F - Fast Sync (Get blockchain from last block)\n\t N - Normal Sync (Download All blockchain)"
+ read -r synchoice
+ case "$synchoice" in
+  N|n) info "Syncronizing ALL Bitcanna Blockchain"
+       sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"http://$NODE1_IP:$RPC_PORT1,http://$NODE2_IP:$RPC_PORT2\"| ; \
+s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1\"$BLOCK_HEIGHT\"| ; \
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
+s|^(persistent_peers[[:space:]]+=[[:space:]]+).*$|\1\"${NODE1_ID}@${NODE1_IP}:${P2P_PORT1},${NODE2_ID}@${NODE2_IP}:${P2P_PORT2}\"| ; \
 s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"$SEEDS\"|" "$BCNADIR"/config/config.toml
+       break ;;
+  F|f) info "Fast Syncronizing"
+       sed -i.bak -E "s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"http://$NODE1_IP:$RPC_PORT1,http://$NODE2_IP:$RPC_PORT2\"| ; \
+s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"$SEEDS\"|" "$BCNADIR"/config/config.toml
+       break ;;
+  *) warn "Wrong key" ;;
+ esac
+done
 }
 
-function backup(){
+function backupkeys(){
 info "Backup Validator keys"
 cd "$BCNACONF" || warn "Cannot access to .config file"
-if tar -czf "$BCNAUSERHOME"/BCNABACKUP/validator_key.tar.gz ./*_key.json  ; then
+if tar -czf "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER"-validator_key.tar.gz ./*_key.json  ; then
  ok "*_key.json files Compressed"
- if gpg -o "$BCNAUSERHOME"/BCNABACKUP/validator_key.tar.gz.gpg -ca "$BCNAUSERHOME"/BCNABACKUP/validator_key.tar.gz ; then
-  ok "Keys saved and un/encrypted on $BCNAUSERHOME/BCNABACKUP/validator_key.tar.gz/.gpg"
+ if gpg -o "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER"-validator_key.tar.gz.gpg -ca "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER"-validator_key.tar.gz ; then
+  ok "Keys saved and un/encrypted on $BCNAUSERHOME/BCNABACKUP/$MONIKER-validator_key.tar.gz/.gpg"
  else
   warn "FAILED Backing Up the KEYS! DO IT MANUALLY" 
  fi
@@ -454,24 +464,13 @@ fi
 
 function bcnacosmovisor(){
 info "Configure BCNA to use Cosmovisor"
-cosmovisordetection
 cosmovisordownload
-ln -s -f -T "${BCNADIR}"/cosmovisor/genesis "${BCNADIR}"/cosmovisor/current || erro "Unable to create symlink for genesis to cosmovisor current"
-if [[ $(/tmp/"$BCNAD" version) == "$VERSIONNEW" ]] ; then
- sudo cp /tmp/"$BCNAD" "${BCNADIR}"/cosmovisor/genesis/bin/"$BCNAD" || erro "Unable copy bcnad to ${BCNADIR}/cosmovisor/genesis/bin/ directory"
-fi
-warn "You can check that everything is OK:"
-ls .bcna/cosmovisor/ -lh
-read -n 1 -s -r -p "$(info "Press any key to continue...")"
-checkservicetype
-info "Check $MYSERVICE.service Running"
-if sudo systemctl is-active "$MYSERVICE".service > /dev/null 2>&1 ; then
- ok "$MYSERVICE.service Is Running"
-else
- info "$MYSERVICE.service Is Starting"
- sudo systemctl start "$MYSERVICE".service
- sleep 5
-fi
+mkdir -p "$BCNADIR"/cosmovisor/genesis/bin
+mkdir -p "$BCNADIR"/cosmovisor/upgrades/sativa/bin
+mkdir -p "$BCNADIR"/cosmovisor/upgrades/indica/bin
+sudo cp /usr/local/bin/"$BCNAD" "$BCNADIR"/cosmovisor/genesis/bin/
+sudo cp /tmp/"$COSMOV" 
+ln -s -f -T "$BCNADIR"/cosmovisor/genesis "$BCNADIR"/cosmovisor/current || erro "Unable to create symlink for genesis to cosmovisor current"
 echo "[Unit]
 Description=Cosmovisor BitCanna Service
 After=network-online.target
@@ -494,7 +493,7 @@ if sudo cp /tmp/"$COSMOV".service /lib/systemd/system/ && sudo systemctl daemon-
   sudo systemctl disable "$BCNAD".service
   sudo rm /lib/systemd/system/"$BCNAD".service
   sudo systemctl daemon-reload
-  ok "$BCNAD Stopped, Disabled and Removed"
+  ok "$BCNAD.service Stopped, Disabled and Removed"
  elif ! sudo systemctl is-active "$BCNAD".service > /dev/null 2>&1 ; then
   info "$BCNAD.service already stopped"
   sudo systemctl disable "$BCNAD".service
@@ -505,59 +504,22 @@ if sudo cp /tmp/"$COSMOV".service /lib/systemd/system/ && sudo systemctl daemon-
   erro "Something wrong with $BCNAD.service"
  fi
  if sudo rm /usr/local/bin/bcnad ; then
-  ok "bcnad removed"
+  ok "bcnad removed from /usr/local/bin"
  else
   warn "Remove bcnad Manually. sudo rm /usr/local/bin/bcnad"
  fi
+ echo "export DAEMON_NAME=bcnad
+export DAEMON_RESTART_AFTER_UPGRADE=true
+export DAEMON_HOME=${HOME}/.bcna
+PATH=\"$BCNADIR/cosmovisor/current/bin:$PATH\"" | tee -a "${HOME}"/.profile
+ . "$HOME"/.profile 
  if sudo systemctl enable "$COSMOV".service && sudo systemctl start "$COSMOV".service ;then
-  ok "Bitcanna-cosmovisor Service Enabled and Started"
+  ok "$COSMOV.service Enabled and Started"
  else 
   erro "Problem Enabling/Starting Bitcanna-cosmovisor Service"
  fi
 else 
  erro "Problem setting Bitcanna-cosmovisor Service"
-fi
-echo "export DAEMON_NAME=bcnad
-export DAEMON_RESTART_AFTER_UPGRADE=true
-export DAEMON_HOME=${HOME}/.bcna
-PATH=\"$BCNADIR/cosmovisor/current/bin:$PATH\"" | tee -a "${HOME}"/.profile
-. "$HOME"/.profile
-info "Commands:"
-echo "Show cosmovisor Version: $COSMOV version
-Show BCNA Version: $BCNAD version
-Show Sync info: $COSMOV status"
-info "Cosmovisor Service:
-Stop Service: sudo service $COSMOV stop 
-Start Service: sudo service $COSMOV start
-Restart Service: sudo service $COSMOV restart
-Check LOGS: sudo journalctl -u $COSMOV -f"
-}
-
-function cosmovisordetection(){
-CODENAMENOWINDICA=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep -ioF "indica")
-CODENAMENOWSATIVA=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep -ioF "sativa")
-if [ "$CODENAMENOWSATIVA" == "SATIVA" ] ; then
- ok "Sativa codename"
- info "Creating cosmovisor directories..."
- mkdir -p "${HOME}"/.bcna/cosmovisor/genesis/bin
- mkdir -p "${HOME}"/.bcna/cosmovisor/upgrades/sativa/bin
- CODENAME="SATIVA"
-elif [ "$CODENAMENOWINDICA" == "INDICA" ] ; then
- ok "Indica codename"
- info "Creating cosmovisor directories..."
-  mkdir -p "${HOME}"/.bcna/cosmovisor/genesis/bin
-  mkdir -p "${HOME}"/.bcna/cosmovisor/upgrades/indica/bin
-  CODENAME="INDICA"
-else
- erro "Problem getting CODENAME sativa/indica"
-fi
-}
-
-function checkservicetype(){
-if systemctl --all --type service | grep -q cosmovisor ; then
- MYSERVICE="cosmovisor"
-elif systemctl --all --type service | grep -q bcnad ; then
- MYSERVICE="bcnad"
 fi
 }
 
@@ -570,6 +532,7 @@ if sudo ufw allow from 167.172.43.16 proto tcp to any port 26660 ; then
 else
  warn "UFW rule NOT added to Prometheus analytics"
 fi
+read -n 1 -s -r -p "$(info "Report your IP $VPSIP to Bitcanna Team :) \n Press any key to continue...")"
 syncr
 }
 
@@ -605,4 +568,16 @@ else
 fi
 checkin
 concl
+if [ "$choix" == "i" ] || [ "$choix" == "I" ]; then
+ info "Commands:
+Show BCNA Version: $BCNAD version
+Show Sync info: $COSMOV status
+
+Cosmovisor Service:
+Stop Service: sudo service $COSMOV stop 
+Start Service: sudo service $COSMOV start
+Restart Service: sudo service $COSMOV restart
+
+Check LOGS: sudo journalctl -u $COSMOV -f"
+fi
 exit 0
