@@ -5,7 +5,7 @@
 #               bcnad + cosmovisor                  #   
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V6.12                   #
+#                  Version: V6.13                   #
 #             Donate BitCanna Address:              #
 #    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
 #---------------------------------------------------#
@@ -28,6 +28,7 @@ COSMOVISORLINKSHA=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$
 VERSIONNEW=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep "tag_name" | cut -d\" -f4 | head -1)
 VERSIONOLD=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases" | grep "tag_name" | cut -d\" -f4 | head -2 | tail -1)
 SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,23671067d0fd40aec523290585c7d8e91034a771@seed2.bitcanna.io:26656"
+defaultammount="1000000"
 BCNAUSERHOME="$HOME"
 BCNADIR="$BCNAUSERHOME/.bcna"
 BCNACONF="$BCNADIR/config"
@@ -35,7 +36,7 @@ BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 COSMOV="cosmovisor"
 BCNAPORT="26656"
-SCRPTVER="V6.12"
+SCRPTVER="V6.13"
 DONATE="B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv"
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
@@ -428,15 +429,21 @@ fi
 
 function validator(){
 while [[ "$amountdelegate" != ^[0-9]+$ ]]; do
- info "How much ubcna you want delegate to validator? (1000000ubcna = 1 BCNA): [1000000]:"
+ info "How much ubcna you want delegate to validator? (1000000ubcna = 1 BCNA): [$defaultammount]:"
  read -r amountdelegate
- amountdelegate=${amountdelegate:-1000000}
+ amountdelegate=${amountdelegate:-$defaultammount}
  if [[ "$amountdelegate" =~ ^[0-9]+$ ]]; then
   ok "Valid amount: $amountdelegate ubcna"
  else
   warn "Just Numbers Valid"
  fi
 done
+info "Set your Website (ex: https://github.com/hellresistor )"
+read -r MYWEBSITE
+info "Set your PGP Keybase key"
+read -r MYPGPKEY
+info "Set Some Details (ex: My Sweet Spot )"
+read -r MYDETAILS
 if "$BCNAD" tx staking create-validator \
 --amount "$amountdelegate"ubcna \
 --commission-max-change-rate 0.10 \
@@ -446,6 +453,10 @@ if "$BCNAD" tx staking create-validator \
 --min-self-delegation 1 \
 --moniker "$MONIKER" \
 --pubkey "$($BCNAD tendermint show-validator)" \
+--website "${MYWEBSITE}" \
+--identity "$MYPGPKEY" \
+--details "\"$MYDETAILS\"" \
+--memo "Create Validator by CosmoCanna-Lazy tool" \
 --chain-id "$CHAINID" \
 --gas auto \
 --gas-adjustment 1.5 \
