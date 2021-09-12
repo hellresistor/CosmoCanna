@@ -2,7 +2,7 @@
 # shellcheck disable=SC1091,SC2034,SC1090
 #---------------------------------------------------#
 #  A BitCanna-Cosmos Community Installation Script  #
-#               bcnad + cosmovisor                  #
+#               bcnad + cosmovisor                  #   
 #---------------------------------------------------#
 #---------------------------------------------------#
 #                  Version: V6.12                   #
@@ -469,7 +469,7 @@ mkdir -p "$BCNADIR"/cosmovisor/genesis/bin
 mkdir -p "$BCNADIR"/cosmovisor/upgrades/sativa/bin
 mkdir -p "$BCNADIR"/cosmovisor/upgrades/indica/bin
 sudo cp /usr/local/bin/"$BCNAD" "$BCNADIR"/cosmovisor/genesis/bin/
-sudo cp /tmp/"$COSMOV" 
+sudo cp /tmp/"$COSMOV" /usr/local/bin/"$COSMOV"
 ln -s -f -T "$BCNADIR"/cosmovisor/genesis "$BCNADIR"/cosmovisor/current || erro "Unable to create symlink for genesis to cosmovisor current"
 echo "[Unit]
 Description=Cosmovisor BitCanna Service
