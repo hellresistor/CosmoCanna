@@ -182,11 +182,11 @@ elif [ "$choix" == "r" ] || [ "$choix" == "R" ] ; then
   sudo systemctl disable "$BCNAD".service || sudo systemctl disable "$COSMOV".service
   sudo rm -f /usr/local/bin/"$BCNAD" > /dev/null 2>&1 || warn "Cannot Delete /usr/local/bin/$BCNAD"
   sudo rm -f /usr/local/bin/"$COSMOV" > /dev/null 2>&1 || warn "Cannot Delete /usr/local/bin/$COSMOV"
-  sudo systemctl disable "$BCNAD".service || warn "Cannot Disable $BCNAD.service"
-  sudo systemctl disable "$COSMOV".service || warn "Cannot Disable $COSMOV.service"
-  sudo systemctl daemon-reload || warn "Unable to Reload daemon services"
-  sudo rm /lib/systemd/system/"$BCNAD".service || warn "Cannot remove /lib/systemd/system/$BCNAD.service"
-  sudo rm /lib/systemd/system/"$COSMOV".service || warn "Cannot remove /lib/systemd/system/$COSMOV.service"
+  sudo systemctl disable "$BCNAD".service > /dev/null 2>&1 || warn "Cannot Disable $BCNAD.service"
+  sudo systemctl disable "$COSMOV".service > /dev/null 2>&1 || warn "Cannot Disable $COSMOV.service"
+  sudo systemctl daemon-reload > /dev/null 2>&1 || warn "Unable to Reload daemon services"
+  sudo rm /lib/systemd/system/"$BCNAD".service > /dev/null 2>&1 || warn "Cannot remove /lib/systemd/system/$BCNAD.service"
+  sudo rm /lib/systemd/system/"$COSMOV".service > /dev/null 2>&1 || warn "Cannot remove /lib/systemd/system/$COSMOV.service"
   if [[ ! -f "$BCNAUSERHOME"/REMOVEDBCNABACKUP ]] ; then
    mkdir -p "$BCNAUSERHOME"/REMOVEDBCNABACKUP
   fi
