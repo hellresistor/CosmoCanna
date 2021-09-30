@@ -5,16 +5,16 @@
 #               bcnad + cosmovisor                  #   
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V6.13                   #
+#                  Version: V6.30                   #
 #             Donate BitCanna Address:              #
 #    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
 #---------------------------------------------------#
 
 ########
 # EDIT #
-MONIKER="" ## Set Your Moniker## 
+MONIKER="hellrezistortest001" ## Set Your Moniker## 
 WALLETNAME="${MONIKER}-Wallet" ## Set Your Name Wallet
-CHAINID="bitcanna-testnet-7"  ## Set correct chain
+CHAINID="bitcanna-testnet-9"  ## Set correct chain
 BCNACOSMOSREP="bcna"
 GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/testnet-bcna-cosmos/main/instructions/pre-swap/genesis.json"
 
@@ -22,9 +22,9 @@ GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/testnet-bcna-cosmo
 
 function varys(){
 BCNADLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4 | head -1)
-BCNADLINKSHA=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep "binary sha256sum:" | cut -d\` -f4)
+BCNADLINKSHA=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep "binary sha256sum" | cut -d\` -f4)
 COSMOVISORLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4 | tail -1)
-COSMOVISORLINKSHA=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep "binary sha256sum:" | cut -d\` -f8)
+COSMOVISORLINKSHA=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep "binary sha256sum" | cut -d\` -f8)
 VERSIONNEW=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep "tag_name" | cut -d\" -f4 | head -1)
 VERSIONOLD=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases" | grep "tag_name" | cut -d\" -f4 | head -2 | tail -1)
 SEEDS="d6aa4c9f3ccecb0cc52109a95962b4618d69dd3f@seed1.bitcanna.io:26656,23671067d0fd40aec523290585c7d8e91034a771@seed2.bitcanna.io:26656"
@@ -36,8 +36,8 @@ BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 COSMOV="cosmovisor"
 BCNAPORT="26656"
-SCRPTVER="V6.13"
-DONATE="B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv"
+SCRPTVER="V6.30"
+DONATE=""
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
 }
@@ -211,7 +211,7 @@ history -cw
 
 function syncr(){
 info "Syncronizing with Blockchain"
-while [ "$(curl -s localhost:26657/status  | jq .result.sync_info.catching_up)" == "true" ]
+while [ "$(curl -s localhost:26657/status | jq .result.sync_info.catching_up)" == "true" ]
 do 
 clear
 bcnatimer
@@ -222,6 +222,7 @@ NEEDED="$(("$CHAINBLOCK" - "$NODEBLOCK"))"
 info "Remains: $NEEDED Blocks to full syncronization"
 sleep 7
 done
+ok "Syncronized!!"
 }
 
 function SettingConnection(){
@@ -234,7 +235,7 @@ read -r recwallet
 case "$recwallet" in
  s|S) info "Put your Wallet/Address Name to Recovery :"
       read -r WALLETNAME
-      "$BCNAD" keys add "$WALLETNAME" --recover
+      "$BCNAD" keys add $WALLETNAME --recover
       break ;;
  c|C) info "Creating New Wallet/Address"
       WALLETPASS="dummy1"
@@ -248,9 +249,9 @@ case "$recwallet" in
        done
        warn "Repeat PassPhrase: " && read -rsp "" WALLETPASSS
       done
-      if echo -e "${WALLETPASS}\\n${WALLETPASSS}" | "$BCNAD" keys add "$WALLETNAME" |& tee -a "$BCNAUSERHOME"/BCNABACKUP/"$WALLETNAME".walletinfo; then 
+      if echo -e "${WALLETPASS}\\n${WALLETPASSS}" | "$BCNAD" keys add $WALLETNAME |& tee -a "$BCNAUSERHOME"/BCNABACKUP/"$WALLETNAME".walletinfo; then 
        ok "Wallet: $WALLETNAME created succefully"
-       MYWALLETADDR=$(echo $WALLETPASS | $BCNAD keys show $WALLETNAME --address)
+       MYWALLETADDR=$(echo -e "${WALLETPASS}" | "$BCNAD" keys show $WALLETNAME --address)
       else 
        erro "Wallet: $WALLETNAME NOT created"
       fi 
@@ -289,11 +290,8 @@ case "$recvalidator" in
       gpg -d "$BCNAUSERHOME"/"$keyfile" | tar xzvf - -C "$BCNACONF"
       break ;;
  c|C) info "Creating New MONIKER" 
-      if "$BCNAD" init "$MONIKER" --chain-id "$CHAINID" |& tee -a "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER".moniker.info ; then 
-	   ok "Folders Initialized"
-      else
-	   erro "Impossible Initialize Folders"
-      fi
+      $BCNAD init $MONIKER --chain-id "$CHAINID" |& tee -a "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER".moniker.info
+      ok "Moniker Initialized"
       break ;;
    *) warn "Missed key" ;;
 esac
@@ -353,7 +351,7 @@ WantedBy=multi-user.target
   erro "Problem setting Bitcanna-Cosmos Service"
  fi
 fi
-sleep 5
+sleep 3
 syncr
 sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR"
 sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR"
@@ -420,7 +418,7 @@ else
 fi
 cd - || warn "Cannot access to .config file"
 info "Backup Wallet Keys..."
-if "$BCNAD" keys export "$WALLETNAME" ; then
+if echo -e "${WALLETPASS}\\n${WALLETPASSS}" | "$BCNAD" keys export $WALLETNAME ; then
  ok "$WALLETNAME wallet Keys exported"
 else 
  warn "Unable export Keys from wallet $WALLETNAME. Do it manually"
@@ -449,19 +447,19 @@ if "$BCNAD" tx staking create-validator \
 --commission-max-change-rate 0.10 \
 --commission-max-rate 0.2 \
 --commission-rate 0.1 \
---from "$WALLETNAME" \
+--from $WALLETNAME \
 --min-self-delegation 1 \
---moniker "$MONIKER" \
---pubkey "$($BCNAD tendermint show-validator)" \
---website "${MYWEBSITE}" \
---identity "$MYPGPKEY" \
---details "\"$MYDETAILS\"" \
+--moniker $MONIKER \
+--pubkey $($BCNAD tendermint show-validator) \
+--website \"${MYWEBSITE}\" \
+--identity \"${MYPGPKEY}\" \
+--details \"${MYDETAILS}\" \
 --memo "Create Validator by CosmoCanna-Lazy tool" \
---chain-id "$CHAINID" \
+--chain-id $CHAINID \
 --gas auto \
 --gas-adjustment 1.5 \
 --gas-prices 0.01ubcna >> "$BCNAUSERHOME"/BCNABACKUP/createvalidator.extract ; then
-ok "Validator Created"
+ ok "Validator Created"
 else
  warn "Some problem creating Validator. Check it Manually"
 fi
@@ -566,6 +564,9 @@ fi
 if [ -z "$WALLETNAME" ]; then
  erro "Set WALLETNAME on this Script ..."
 fi
+if [[ "$WALLETNAME" = *" "* ]]; then
+  erro "Please, NOT use SPACE character on Wallet name"
+fi
 varys
 if bash CheckSystem.sh ; then
  true
@@ -580,7 +581,8 @@ fi
 checkin
 concl
 if [ "$choix" == "i" ] || [ "$choix" == "I" ]; then
- info "Commands:
+ if [ "$choiccosmovisor" == "y" ] || [ "$choiccosmovisor" == "Y" ]; then
+  info "Commands:
 Show BCNA Version: $BCNAD version
 Show Sync info: $COSMOV status
 
@@ -590,5 +592,18 @@ Start Service: sudo service $COSMOV start
 Restart Service: sudo service $COSMOV restart
 
 Check LOGS: sudo journalctl -u $COSMOV -f"
+ else
+  if [ "$choiccosmovisor" == "y" ] || [ "$choiccosmovisor" == "Y" ]; then
+  info "Commands:
+Show BCNA Version: $BCNAD version
+Show Sync info: $BCNAD status
+
+Cosmovisor Service:
+Stop Service: sudo service $BCNAD stop 
+Start Service: sudo service $BCNAD start
+Restart Service: sudo service $BCNAD restart
+
+Check LOGS: sudo journalctl -u $BCNAD -f"
+ fi
 fi
 exit 0
