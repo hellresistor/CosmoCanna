@@ -592,8 +592,7 @@ Start Service: sudo service $COSMOV start
 Restart Service: sudo service $COSMOV restart
 
 Check LOGS: sudo journalctl -u $COSMOV -f"
- else
-  if [ "$choiccosmovisor" == "y" ] || [ "$choiccosmovisor" == "Y" ]; then
+ elif [ "$choiccosmovisor" == "n" ] || [ "$choiccosmovisor" == "N" ]; then
   info "Commands:
 Show BCNA Version: $BCNAD version
 Show Sync info: $BCNAD status
