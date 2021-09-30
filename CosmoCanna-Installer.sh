@@ -450,7 +450,7 @@ if "$BCNAD" tx staking create-validator \
 --from $WALLETNAME \
 --min-self-delegation 1 \
 --moniker $MONIKER \
---pubkey $($BCNAD tendermint show-validator) \
+--pubkey "$($BCNAD tendermint show-validator)" \
 --website \"${MYWEBSITE}\" \
 --identity \"${MYPGPKEY}\" \
 --details \"${MYDETAILS}\" \
