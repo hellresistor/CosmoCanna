@@ -5,7 +5,7 @@
 #               bcnad + cosmovisor                  #   
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V6.30                   #
+#                  Version: V6.31                   #
 #             Donate BitCanna Address:              #
 #    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
 #---------------------------------------------------#
@@ -14,13 +14,13 @@
 # EDIT #
 MONIKER="" ## Set Your Moniker## 
 WALLETNAME="" ## Set Your Name Wallet
-CHAINID="bitcanna-testnet-9"  ## Set correct chain
-BCNACOSMOSREP="bcna"
-GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/testnet-bcna-cosmos/main/instructions/pre-swap/genesis.json"
 
 . CONFIG
 
 function varys(){
+CHAINID="bitcanna-1"
+BCNACOSMOSREP="bcna"
+GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/bcna/main/genesis.json"
 BCNADLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4 | head -1)
 BCNADLINKSHA=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep "binary sha256sum" | cut -d\` -f4)
 COSMOVISORLINK=$(curl --silent "https://api.github.com/repos/BitCannaGlobal/$BCNACOSMOSREP/releases/latest" | grep 'browser_download_url' | cut -d\" -f4 | tail -1)
@@ -36,7 +36,7 @@ BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 COSMOV="cosmovisor"
 BCNAPORT="26656"
-SCRPTVER="V6.30"
+SCRPTVER="V6.31"
 DONATE=""
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
