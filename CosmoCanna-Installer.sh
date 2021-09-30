@@ -12,8 +12,8 @@
 
 ########
 # EDIT #
-MONIKER="hellrezistortest001" ## Set Your Moniker## 
-WALLETNAME="${MONIKER}-Wallet" ## Set Your Name Wallet
+MONIKER="" ## Set Your Moniker## 
+WALLETNAME="" ## Set Your Name Wallet
 CHAINID="bitcanna-testnet-9"  ## Set correct chain
 BCNACOSMOSREP="bcna"
 GENESISLINK="https://raw.githubusercontent.com/BitCannaGlobal/testnet-bcna-cosmos/main/instructions/pre-swap/genesis.json"
