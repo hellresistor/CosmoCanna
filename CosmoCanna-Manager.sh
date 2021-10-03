@@ -2,7 +2,7 @@
 #-------------------------------------------#
 #   A BitCanna-Cosmos-Validator Lazy Tool   #
 #-------------------------------------------#
-#            Version: V3.11                 #
+#            Version: V3.12                 #
 #        Donate BitCanna Address:           #
 #--> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <-- #
 #-------------------------------------------#
@@ -15,8 +15,8 @@ MYMoniker=$(curl -s http://localhost:26657/status | grep -Po '"moniker": "\K.*?(
 ### Put here your Wallet NAME
 MYWALLETNAME="${MYMoniker}-Wallet"
 
-BCNACHAINID="bitcanna-testnet-7"
-GASFEE="--gas auto --gas-adjustment 1.5 --gas-prices 0.01ubcna"
+BCNACHAINID="bitcanna-1"
+GASFEE="--gas auto --gas-adjustment 1.5 --gas-prices 0.001ubcna"
 MYVALIDADDRESS=$(bcnad query staking validators --output json | jq | grep -B10 "$MYMoniker" | head -n1 | grep -Po '"operator_address": "\K.*?(?=")')
 if [ -z "$KEYPASSWD" ] ; then
  info "Put keyring wallet password:"
