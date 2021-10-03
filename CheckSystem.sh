@@ -23,17 +23,17 @@ fi
 
 info "Checking System Compatibility..."
 ## CPU Cores Checking...
-if [[ $(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}') -ge 2 ]] ; then
- ok ">= 2 Cores"
+if [[ $(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}') -ge 4 ]] ; then
+ ok ">= 4 Cores"
 else
- erro "< 2 Cores, Upgrade more"
+ erro "< 4 Cores, Upgrade more"
 fi
 
 ## RAM Checking...
-if [[ $(awk '/MemTotal/ {print $2}' /proc/meminfo) -ge 4000000 ]] ; then
- ok ">= 4GB RAM"
+if [[ $(awk '/MemTotal/ {print $2}' /proc/meminfo) -ge 8000000 ]] ; then
+ ok ">= 8GB RAM"
 else
- erro "< 4GB RAM, Upgrade more"
+ erro "< 8GB RAM, Upgrade more"
 fi
 
 ## Storage avaliable Checking ...
@@ -51,5 +51,5 @@ DISKSIZEREDUCT=${DISKSIZE%.*}
 if [[ "$DISKSIZEREDUCT" -ge 80 ]] ; then
  ok ">= 80 GB"
 else
- erro "< 80 GB, Upgrade more"
+ erro "< 80 GB, Upgrade more storage"
 fi
