@@ -5,7 +5,7 @@
 #               bcnad + cosmovisor                  #   
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V6.31                   #
+#                  Version: V6.32                   #
 #             Donate BitCanna Address:              #
 #    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
 #---------------------------------------------------#
@@ -36,7 +36,7 @@ BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 COSMOV="cosmovisor"
 BCNAPORT="26656"
-SCRPTVER="V6.31"
+SCRPTVER="V6.32"
 DONATE=""
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
@@ -303,7 +303,7 @@ else
  erro "genesis.json file NOT moved to $BCNAUSERHOME/$BCNACONF/genesis.json"
 fi
 faztsyncconfig
-sed -E -i "s/minimum-gas-prices = \".*\"/minimum-gas-prices = \"0.01ubcna\"/" "$BCNACONF"/app.toml || erro "Cannot set minimum-gas on app.toml file"
+sed -E -i "s/minimum-gas-prices = \".*\"/minimum-gas-prices = \"0.001ubcna\"/" "$BCNACONF"/app.toml || erro "Cannot set minimum-gas on app.toml file"
 if sudo systemctl is-active ufw > /dev/null; then
  ok "ufw Active"
 else
@@ -458,7 +458,7 @@ if "$BCNAD" tx staking create-validator \
 --chain-id $CHAINID \
 --gas auto \
 --gas-adjustment 1.5 \
---gas-prices 0.01ubcna >> "$BCNAUSERHOME"/BCNABACKUP/createvalidator.extract ; then
+--gas-prices 0.001ubcna >> "$BCNAUSERHOME"/BCNABACKUP/createvalidator.extract ; then
  ok "Validator Created"
 else
  warn "Some problem creating Validator. Check it Manually"
