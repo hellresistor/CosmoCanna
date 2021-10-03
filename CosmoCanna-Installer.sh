@@ -353,9 +353,9 @@ WantedBy=multi-user.target
 fi
 sleep 3
 syncr
-sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR"
-sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR"
-sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR"
+sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR" && warn "And check your TX on explorer"
+sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR" && warn "And check your TX on explorer"
+sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR" && warn "And check your TX on explorer"
 read -n 1 -s -r -p "$(info "Press any key to continue...\n\n")" && echo && echo
 }
 
