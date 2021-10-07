@@ -5,7 +5,7 @@
 #               bcnad + cosmovisor                  #   
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V6.32                   #
+#                  Version: V6.33                   #
 #             Donate BitCanna Address:              #
 #    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
 #---------------------------------------------------#
@@ -36,7 +36,7 @@ BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 COSMOV="cosmovisor"
 BCNAPORT="26656"
-SCRPTVER="V6.32"
+SCRPTVER="V6.33"
 DONATE=""
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
@@ -130,16 +130,20 @@ if [ "$choix" == "i" ] || [ "$choix" == "I" ]; then
  if [[ "$MYBIN" == "NONE" ]] ; then
   bitcannadownload
   SettingConnection
-  while true
-  do 
-  info "You Want Set up the Validator? (Y|n)"
-  read -r choicsettingadvance
-  case "$choicsettingadvance" in
-   y|Y) validator && break;;
-   n|N) warn "Validator NOT set" && break;;
-   *) warn "Wrong key" ;;
-  esac 
-  done
+  if [ "$MONIKSTAT" == "NOT" ] ; then
+   warn "Skipping Validator creation step..."
+  else
+   while true
+   do 
+   info "You Want Set up the Validator? (Y|n)"
+   read -r choicsettingadvance
+   case "$choicsettingadvance" in
+    y|Y) validator && break ;;
+    n|N) warn "Validator NOT set" && break ;;
+    *) warn "Wrong key" ;;
+   esac 
+   done
+  fi
   while true
   do
   info " You want delegate ?! (Y|n)"
@@ -164,7 +168,7 @@ if [ "$choix" == "i" ] || [ "$choix" == "I" ]; then
   done
   cleaner
  else
-  erro "Detected $BCNAD/$COSMOV wallet already installed.\n"
+  erro "Detected $MYBIN wallet already installed.\n"
  fi
 elif [ "$choix" == "r" ] || [ "$choix" == "R" ] ; then 
  if [[ -a $(find "/usr/local/bin" -name "$BCNAD") ]] || [[ -a $(find "/usr/local/bin" -name "$COSMOV") ]] ; then
@@ -293,6 +297,8 @@ case "$recvalidator" in
       $BCNAD init $MONIKER --chain-id "$CHAINID" |& tee -a "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER".moniker.info
       ok "Moniker Initialized"
       break ;;
+ n|N) warn "Moniker Not Created" && MONIKSTAT="NOT"
+      break ;;
    *) warn "Missed key" ;;
 esac
 done
@@ -320,7 +326,6 @@ else
  warn "Firewall not configured. Do a manual check."
  warn "Execute: sudo ufw allow $BCNAPORT" && sleep 1
 fi
-
 if [[ -f "/lib/systemd/system/$BCNAD.service" ]] ; then
  warn "$BCNAD.service Exist. Not created new one"
  if sudo systemctl start "$BCNAD".service ; then 
