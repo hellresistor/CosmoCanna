@@ -5,7 +5,6 @@
 # CosmoCanna (TESTNET!!!)
 Bitcanna Cosmos Lazy Tool includes:
   - CosmoCanna-Manager.sh   - A Lazy tool to Manage your wallet
-  - CosmoCanna-Validator.sh - A tool to Generate Genesis Account and JSON file and configure validator security
   - CosmoCanna-Installer.sh - A tool to Install/Remove/Update a Bitcanna-Cosmos Wallet :)
   - Sync-Check-Tool.sh      - A animated tool to check syncronization Nblocks remaining
   - Cosmovisor-Migration.sh - A tool to Migrate BCNAD to use CosmoVisor
@@ -16,8 +15,7 @@ Bitcanna Cosmos Lazy Tool includes:
 Always check MONIKER AND WALLET NAME VARIABLES
 # Run as normal User (NOT ROOT):
     git clone https://github.com/hellresistor/CosmoCanna.git
-    chmod -R +x CosmoCanna && cd CosmoCanna
-    nano <SCRIPT>.sh
+    cd CosmoCanna
     bash <SCRIPT>.sh
 
 
@@ -25,7 +23,7 @@ Always check MONIKER AND WALLET NAME VARIABLES
 If you like this script and/or it saved you a lot of time
 feel free do give some tips to get some seeds or CBD with Bitcanna Coins.
 
-BCNA Address:  B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv
+BCNA Address:  bcna1heysdnwxkhkud0g79ejrd00l036e283f7vth5p
 
 # 420 Time
 With many 420 times and dedication
