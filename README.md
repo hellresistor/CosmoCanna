@@ -2,7 +2,7 @@
 [![ShellLinter](https://github.com/hellresistor/CosmoCanna/actions/workflows/main.yml/badge.svg)](https://github.com/hellresistor/CosmoCanna/actions/workflows/main.yml)
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 
-# CosmoCanna (TESTNET!!!)
+# CosmoCanna
 Bitcanna Cosmos Lazy Tool includes:
   - CosmoCanna-Manager.sh   - A Lazy tool to Manage your wallet
   - CosmoCanna-Installer.sh - A tool to Install/Remove/Update a Bitcanna-Cosmos Wallet :)
