@@ -5,15 +5,10 @@
 #               bcnad + cosmovisor                  #   
 #---------------------------------------------------#
 #---------------------------------------------------#
-#                  Version: V6.33                   #
+#                  Version: V7.00                   #
 #             Donate BitCanna Address:              #
-#    --> B73RRFVtndfPRNSgSQg34yqz4e9eWyKRSv <--     #
+# -> bcna1heysdnwxkhkud0g79ejrd00l036e283f7vth5p <- #
 #---------------------------------------------------#
-
-########
-# EDIT #
-MONIKER="" ## Set Your Moniker## 
-WALLETNAME="" ## Set Your Name Wallet
 
 . CONFIG
 
@@ -36,8 +31,8 @@ BCNADATA="$BCNADIR/data"
 BCNAD="bcnad"
 COSMOV="cosmovisor"
 BCNAPORT="26656"
-SCRPTVER="V6.33"
-DONATE=""
+SCRPTVER="V7.0"
+DONATE="bcna1heysdnwxkhkud0g79ejrd00l036e283f7vth5p"
 DATENOW=$(date +"%Y%m%d%H%M%S")
 VPSIP=$(curl -s ifconfig.me)
 }
@@ -138,7 +133,18 @@ if [ "$choix" == "i" ] || [ "$choix" == "I" ]; then
    info "You Want Set up the Validator? (Y|n)"
    read -r choicsettingadvance
    case "$choicsettingadvance" in
-    y|Y) validator && break ;;
+    y|Y) validator
+         while true
+         do
+         info "You like ADD your server to Prometheus Analytics? (Y/N)"
+         read -r choicprometheus
+         case "$choicprometheus" in
+          y|Y) prometheus && break ;;
+          n|N) warn "Prometheus Analytics NOT configured..." && break ;;
+          *) warn "Wrong key" ;;
+         esac 
+         done
+         break ;;
     n|N) warn "Validator NOT set" && break ;;
     *) warn "Wrong key" ;;
    esac 
@@ -154,7 +160,6 @@ if [ "$choix" == "i" ] || [ "$choix" == "I" ]; then
    *) warn "Wrong key" ;;
   esac 
   done
-  prometheus
   backupkeys
   while true
   do
@@ -194,7 +199,7 @@ elif [ "$choix" == "r" ] || [ "$choix" == "R" ] ; then
   if [[ ! -f "$BCNAUSERHOME"/REMOVEDBCNABACKUP ]] ; then
    mkdir -p "$BCNAUSERHOME"/REMOVEDBCNABACKUP
   fi
-  cp -f -r --preserve "$BCNADIR" "$BCNAUSERHOME"/REMOVEDBCNABACKUP/.bcna."${DATENOW}" > /dev/null 2>&1 || erro "Cannot Copy $BCNADIR"
+  cp -f -r --preserve "$BCNADIR" "$BCNAUSERHOME"/REMOVEDBCNABACKUP/.bcna."${DATENOW}" > /dev/null 2>&1 || warn "Cannot Copy $BCNADIR , Do it Manually"
   sudo rm -R "$BCNADIR" > /dev/null 2>&1 || warn "Cannot Delete $BCNADIR"
   sudo ufw delete allow "$BCNAPORT" > /dev/null 2>&1 || warn "Remove rule from ufw for $BCNAPORT manually"
   sudo ufw delete allow from 167.172.43.16 proto tcp to any port 26660 > /dev/null 2>&1 || warn "Remove rule from ufw for 167.172.43.16 26660 manually"
@@ -209,7 +214,10 @@ fi
 
 function cleaner(){
 info "Cleaning...."
-sudo rm -r /tmp/*  > /dev/null 2>&1 && ok "/tmp folder cleaned"
+sudo rm -r /tmp/genesis*  > /dev/null 2>&1
+sudo rm -r /tmp/bcna* > /dev/null 2>&1
+sudo rm -r /tmp/cosmov*  > /dev/null 2>&1
+ok "Unused files cleaned!"
 history -cw
 }
 
@@ -237,11 +245,53 @@ do
 info "Choose method to recover your wallet:\n\t S - by Seed\n\t C - Create New Wallet"
 read -r recwallet
 case "$recwallet" in
- s|S) info "Put your Wallet/Address Name to Recovery :"
-      read -r WALLETNAME
-      "$BCNAD" keys add $WALLETNAME --recover
+ s|S) info "Put your Wallet Name to Recovery :"
+      while [[ -z "$WALLETNAME" ]]
+      do
+       info "Set a Wallet name: " && read -r WALLETNAME
+       while [[ "$WALLETNAME" = *" "* ]]
+       do
+        warn  "Please, NOT use SPACE characters"
+        WALLETNAME=""
+       done
+      done
+      WALLETPASS="dummy1"
+      WALLETPASSS="dummy2"
+      while [[ "$WALLETPASS" != "$WALLETPASSS" ]]
+      do
+       info "Set PassPhrase: " && read -rsp "" WALLETPASS
+       while [[ "${#WALLETPASS}" -lt 8 ]]
+       do
+        info "Set PassPhrase (+8 chars): " && read -rsp "" WALLETPASS
+       done
+       warn "Repeat PassPhrase: " && read -rsp "" WALLETPASSS
+      done
+      while [[ -z "$WALLETSEED" ]]
+      do
+       info "Put your Wallet SEED: " && read -r WALLETSEED
+       while [[ "$(echo -n "$WALLETSEED" | wc -w)" -ne 24 ]]
+       do
+        warn  "SEED not valid. Permitted 24 words!"
+        WALLETSEED=""
+       done
+      done
+      if echo -e "$WALLETSEED\\n${WALLETPASS}\\n${WALLETPASSS}" | "$BCNAD" keys add $WALLETNAME --recover |& tee -a "$BCNAUSERHOME"/BCNABACKUP/"$WALLETNAME".walletinfo; then 
+       ok "Wallet: $WALLETNAME Recovered succefully"
+       MYWALLETADDR=$(echo -e "${WALLETPASS}" | "$BCNAD" keys show $WALLETNAME --address)
+      else 
+       erro "Wallet: $WALLETNAME NOT Recovered"
+      fi 
       break ;;
  c|C) info "Creating New Wallet/Address"
+      while [[ -z "$WALLETNAME" ]]
+      do
+       info "Set a Wallet name: " && read -r WALLETNAME
+       while [[ "$WALLETNAME" = *" "* ]]
+       do
+        warn  "Please, NOT use SPACE characters"
+        WALLETNAME=""
+       done
+      done
       WALLETPASS="dummy1"
       WALLETPASSS="dummy2"
       while [[ "$WALLETPASS" != "$WALLETPASSS" ]]
@@ -265,7 +315,7 @@ esac
 done
 while true
 do
-info "Choose to get New MONIKER or to RECOVER your MONIKER:\n\t J - by *.tar.gz\n\t G - by *.tar.gz.gpg (GPG Encryption method)\n\t C - Create New Moniker"
+info "Choose to get New MONIKER or to RECOVER your MONIKER:\n\t J - by *.tar.gz\n\t G - by *.tar.gz.gpg (GPG Encryption method)\n\t C - Create New Moniker\n\t N - NOT create Moniker"
 read -r recvalidator
 case "$recvalidator" in
  j|J) info "Set Your *.tar.gz file [validator_key.tar.gz]:"
@@ -293,7 +343,16 @@ case "$recvalidator" in
       ok "$keyfile FOUND in $BCNAUSERHOME Directory..."
       gpg -d "$BCNAUSERHOME"/"$keyfile" | tar xzvf - -C "$BCNACONF"
       break ;;
- c|C) info "Creating New MONIKER" 
+ c|C) info "Creating New MONIKER"
+      while [[ -z "$MONIKER" ]]
+      do
+       info "Set a Moniker name: " && read -r MONIKER
+       while [[ "$MONIKER" = *" "* ]]
+       do
+        warn  "Please, NOT use SPACE characters"
+        MONIKER=""
+       done
+      done
       $BCNAD init $MONIKER --chain-id "$CHAINID" |& tee -a "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER".moniker.info
       ok "Moniker Initialized"
       break ;;
@@ -302,13 +361,12 @@ case "$recvalidator" in
    *) warn "Missed key" ;;
 esac
 done
-
 if cp /tmp/genesis.json "$BCNACONF"/genesis.json > /dev/null 2>&1 ; then
- ok "genesis.json file moved to $BCNAUSERHOME/$BCNACONF/genesis.json"
+ ok "genesis.json file moved to $BCNACONF/genesis.json"
 else 
  erro "genesis.json file NOT moved to $BCNAUSERHOME/$BCNACONF/genesis.json"
 fi
-faztsyncconfig
+sed -E -i "s/seeds = \".*\"/seeds = \"$SEEDS\"/" "$BCNACONF"/config.toml || erro "Cannot set seeds on config.toml file"
 sed -E -i "s/minimum-gas-prices = \".*\"/minimum-gas-prices = \"0.001ubcna\"/" "$BCNACONF"/app.toml || erro "Cannot set minimum-gas on app.toml file"
 if sudo systemctl is-active ufw > /dev/null; then
  ok "ufw Active"
@@ -348,15 +406,15 @@ WantedBy=multi-user.target
 " > /tmp/"$BCNAD".service
  if sudo cp /tmp/"$BCNAD".service /lib/systemd/system/ && sudo systemctl enable "$BCNAD".service ; then
   if sudo systemctl start "$BCNAD".service ; then 
-   ok "Bitcanna-Cosmos Service Started"
+   ok "Bitcanna Service Started"
   else 
-   erro "Problem Starting Bitcanna-Cosmos Service"
+   erro "Problem Starting Bitcanna Service"
   fi
  else 
-  erro "Problem setting Bitcanna-Cosmos Service"
+  erro "Problem setting Bitcanna Service"
  fi
 fi
-sleep 3
+sleep 5
 syncr
 sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR" && warn "And check your TX on explorer"
 sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLETADDR" && warn "And check your TX on explorer"
@@ -364,64 +422,25 @@ sleep 1 && warn "TIME TO CLAIM/SEND/ASK FOR COINS" && ok "Your Address: $MYWALLE
 read -n 1 -s -r -p "$(info "Press any key to continue...\n\n")" && echo && echo
 }
 
-function faztsyncconfig(){
-NODE1_IP="178.128.247.173"
-RPC1="http://$NODE1_IP"
-P2P_PORT1="26656"
-RPC_PORT1="26657"
-NODE2_IP="159.65.198.245"
-RPC2="http://$NODE2_IP"
-RPC_PORT2="26657"
-P2P_PORT2="26656"
-LATEST_HEIGHT=$(curl -s $RPC1:$RPC_PORT1/block | jq -r .result.block.header.height);
-BLOCK_HEIGHT=$((($(("$LATEST_HEIGHT" / 1000)) -10) * 1000));
-if [ "$BLOCK_HEIGHT" -eq 0 ]; then
- erro "Cannot state sync to block 0; Latest block is $LATEST_HEIGHT and must be at least 1000; wait a few blocks!"
-fi
-TRUST_HASH=$(curl -s "$RPC1:$RPC_PORT1/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
-if [ "$TRUST_HASH" == "null" ]; then
- erro "Cannot find block hash. This shouldn't happen :/"
-fi
-NODE1_ID=$(curl -s "$RPC1:$RPC_PORT1/status" | jq -r .result.node_info.id)
-NODE2_ID=$(curl -s "$RPC2:$RPC_PORT2/status" | jq -r .result.node_info.id)
-PERSISTPEERS="${NODE1_ID}@${NODE1_IP}:${P2P_PORT1},${NODE2_ID}@${NODE2_IP}:${P2P_PORT2}"
-
-while true
-do
- info "Choose:\n\t F - Fast Sync (Get blockchain from last block)\n\t N - Normal Sync (Download All blockchain)"
- read -r synchoice
- case "$synchoice" in
-  N|n) info "Syncronizing ALL Bitcanna Blockchain"
-       sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"http://$NODE1_IP:$RPC_PORT1,http://$NODE2_IP:$RPC_PORT2\"| ; \
-s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1\"$BLOCK_HEIGHT\"| ; \
-s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
-s|^(persistent_peers[[:space:]]+=[[:space:]]+).*$|\1\"${NODE1_ID}@${NODE1_IP}:${P2P_PORT1},${NODE2_ID}@${NODE2_IP}:${P2P_PORT2}\"| ; \
-s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"$SEEDS\"|" "$BCNADIR"/config/config.toml
-       break ;;
-  F|f) info "Fast Syncronizing"
-       sed -i.bak -E "s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"http://$NODE1_IP:$RPC_PORT1,http://$NODE2_IP:$RPC_PORT2\"| ; \
-s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"$SEEDS\"|" "$BCNADIR"/config/config.toml
-       break ;;
-  *) warn "Wrong key" ;;
- esac
-done
-}
-
 function backupkeys(){
-info "Backup Validator keys"
-cd "$BCNACONF" || warn "Cannot access to .config file"
-if tar -czf "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER"-validator_key.tar.gz ./*_key.json  ; then
- ok "*_key.json files Compressed"
- if gpg -o "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER"-validator_key.tar.gz.gpg -ca "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER"-validator_key.tar.gz ; then
-  ok "Keys saved and un/encrypted on $BCNAUSERHOME/BCNABACKUP/$MONIKER-validator_key.tar.gz/.gpg"
- else
-  warn "FAILED Backing Up the KEYS! DO IT MANUALLY" 
- fi
+if [ "$recvalidator" == "N" ] || [ "$recvalidator" == "n" ] ; then
+ warn "Skipping Validator Backups..."
 else
- warn "*_key.json files NOT Compressed"
+ info "Backup Validator keys"
+ cd "$BCNACONF" || warn "Cannot access to .config file"
+ if tar -czf "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER"-validator_key.tar.gz ./*_key.json  ; then
+  ok "*_key.json files Compressed"
+  if gpg -o "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER"-validator_key.tar.gz.gpg -ca "$BCNAUSERHOME"/BCNABACKUP/"$MONIKER"-validator_key.tar.gz ; then
+   ok "Keys saved and un/encrypted on $BCNAUSERHOME/BCNABACKUP/$MONIKER-validator_key.tar.gz/.gpg"
+  else
+   warn "FAILED Backing Up the KEYS! DO IT MANUALLY" 
+  fi
+ else
+  warn "*_key.json files NOT Compressed"
+ fi
+ cd - || warn "Cannot access to .config file"
 fi
-cd - || warn "Cannot access to .config file"
+
 info "Backup Wallet Keys..."
 if echo -e "${WALLETPASS}\\n${WALLETPASSS}" | "$BCNAD" keys export $WALLETNAME ; then
  ok "$WALLETNAME wallet Keys exported"
@@ -560,18 +579,6 @@ read -n 1 -s -r -p "$(info "Press any key to continue...")"
 ###############
 ###  Start  ###
 ###############
-if [ -z "$MONIKER" ]; then
- erro "Set MONIKER var on this Script ..."
-fi
-if [[ "$MONIKER" = *" "* ]]; then
-  erro "Please, NOT use SPACE character on Moniker"
-fi
-if [ -z "$WALLETNAME" ]; then
- erro "Set WALLETNAME on this Script ..."
-fi
-if [[ "$WALLETNAME" = *" "* ]]; then
-  erro "Please, NOT use SPACE character on Wallet name"
-fi
 varys
 if bash CheckSystem.sh ; then
  true
