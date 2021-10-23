@@ -12,7 +12,6 @@ Bitcanna Cosmos Lazy Tool includes:
 
 
 
-Always check MONIKER AND WALLET NAME VARIABLES
 # Run as normal User (NOT ROOT):
     git clone https://github.com/hellresistor/CosmoCanna.git
     cd CosmoCanna
